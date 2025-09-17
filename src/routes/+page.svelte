@@ -2,18 +2,22 @@
 	import { onDestroy } from 'svelte';
 	import Timer from '$lib/components/Timer.svelte';
 	import TaskList from '$lib/components/TaskList.svelte';
-	import { timerAgent, type TimerMode } from '$lib/stores/timer-agent';
+		import { timerAgent, type TimerMode } from '$lib/stores/timer-agent';
+		import SettingsPanel from '$lib/components/SettingsPanel.svelte';
 
 	let mode: TimerMode = 'Pomodoro';
 	const unsub = timerAgent.subscribe((s: { currentMode: TimerMode }) => (mode = s.currentMode));
 	onDestroy(() => unsub());
 
-	$: bgClass =
+		$: bgClass =
 		mode === 'Pomodoro'
 			? 'bg-pomodoro'
 			: mode === 'ShortBreak'
 			? 'bg-shortbreak'
 			: 'bg-longbreak';
+		let isRunning = false;
+		const unsubRun = timerAgent.subscribe((s: any) => (isRunning = s.timerStatus === 'running'));
+		onDestroy(() => unsubRun());
 </script>
 
 <main class={`app-container ${bgClass}`}>
@@ -24,6 +28,7 @@
 	<div class="app-content">
 		<Timer />
 		<TaskList />
+			<SettingsPanel />
 	</div>
 </main>
 
@@ -35,15 +40,14 @@
 	}
 
 	/* Backgrounds per mode */
-	.bg-pomodoro {
-		background-color: #f67280; /* warm red/pink */
-	}
-	.bg-shortbreak {
-		background-color: #82ccdd; /* calm blue */
-	}
-	.bg-longbreak {
-		background-color: #78e08f; /* fresh green */
-	}
+	.bg-pomodoro { background-color: #f67280; }
+	.bg-shortbreak { background-color: #82ccdd; }
+	.bg-longbreak { background-color: #78e08f; }
+
+	/* Slightly darker while running */
+	.app-container.bg-pomodoro:has(.time-display.running) { background-color: #ee5f70; }
+	.app-container.bg-shortbreak:has(.time-display.running) { background-color: #65bfd6; }
+	.app-container.bg-longbreak:has(.time-display.running) { background-color: #61d57c; }
 
 	.app-header {
 		text-align: center;

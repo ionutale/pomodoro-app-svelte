@@ -1,6 +1,7 @@
 import { writable } from 'svelte/store';
 import { settingsAgent } from './settings-agent';
 import { taskAgent } from './task-agent';
+import { playAlarm } from '$lib/audio/sounds';
 
 export type TimerMode = 'Pomodoro' | 'ShortBreak' | 'LongBreak';
 export type TimerStatus = 'running' | 'paused' | 'stopped';
@@ -62,6 +63,10 @@ function createTimerAgent() {
 					clearInterval(intervalId!);
 					intervalId = null;
 
+					// Handle end-of-session: alarm and mode transitions
+					const s = settingsAgent.getSetting('soundSettings') as { alarmRepeat?: number; alarmVolume?: number };
+					playAlarm(s?.alarmRepeat ?? 1, (s?.alarmVolume ?? 50) / 100).catch(() => {});
+
 					// Handle mode transitions
 					let nextMode: TimerMode;
 					let pomodorosCompleted = state.pomodorosCompletedInCycle;
@@ -81,13 +86,30 @@ function createTimerAgent() {
 						nextMode = 'Pomodoro';
 					}
 
-					return {
+					// Determine auto-start preference for the next session
+					const t = settingsAgent.getSetting('timerSettings') as {
+						autoStartBreaks?: boolean;
+						autoStartPomodoros?: boolean;
+					};
+					const willAutoStart =
+						nextMode === 'Pomodoro' ? !!t?.autoStartPomodoros : !!t?.autoStartBreaks;
+
+					const newState: TimerState = {
 						...state,
-						timerStatus: 'stopped',
+						timerStatus: (willAutoStart ? 'running' : 'stopped') as TimerStatus,
 						timeRemaining: getDurationForMode(nextMode),
 						currentMode: nextMode,
 						pomodorosCompletedInCycle: pomodorosCompleted
 					};
+
+					// If auto-start, spin up a fresh interval tick by calling startTimer-like behavior
+					if (willAutoStart && !intervalId) {
+						setTimeout(() => {
+							startTimer();
+						}, 0);
+					}
+
+					return newState;
 				}
 
 				return { ...state, timeRemaining: newTimeRemaining };
