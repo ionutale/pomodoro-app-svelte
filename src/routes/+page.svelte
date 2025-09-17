@@ -6,13 +6,18 @@
 	import { settingsAgent } from '$lib/stores/settings-agent';
 	import SettingsPanel from '$lib/components/SettingsPanel.svelte';
 	import SessionHistory from '$lib/components/SessionHistory.svelte';
+	import Goals from '$lib/components/Goals.svelte';
+	import Statistics from '$lib/components/Statistics.svelte';
+	import { themeService } from '$lib/services/theme-service';
 
 	let mode: TimerMode = 'Pomodoro';
 	const unsub = timerAgent.subscribe((s: { currentMode: TimerMode }) => (mode = s.currentMode));
 	onDestroy(() => unsub());
 
-	let theme = settingsAgent.getSetting('themeSettings') as any;
-	const unsubTheme = settingsAgent.subscribe((s) => (theme = (s as any).themeSettings));
+	let theme = themeService.getCurrentTheme();
+	const unsubTheme = settingsAgent.subscribe(() => {
+		theme = themeService.getCurrentTheme();
+	});
 	onDestroy(() => unsubTheme());
 
 	$: bgClass =
@@ -66,9 +71,11 @@
 
 	<div class="app-content">
 		<Timer />
+		<Goals />
 		<TaskList />
 		<SettingsPanel />
 		<SessionHistory />
+		<Statistics />
 	</div>
 </main>
 

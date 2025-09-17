@@ -32,6 +32,18 @@ export interface ThemeSettings {
 		shortBreak: string;
 		longBreak: string;
 	};
+	customThemes: CustomTheme[];
+}
+
+export interface CustomTheme {
+	id: string;
+	name: string;
+	colors: {
+		pomodoro: string;
+		shortBreak: string;
+		longBreak: string;
+	};
+	useGradient: boolean;
 }
 
 export interface NotificationSettings {
@@ -46,12 +58,20 @@ export interface NotificationSettings {
 export interface IntegrationSettings {
 	todoistConnected: boolean;
 	webhookUrl: string | null;
+	webhookEvents: ('sessionStart' | 'sessionEnd' | 'breakStart')[];
+	webhookEnabled: boolean;
 }
 
 export interface GoalsSettings {
 	dailyPomodoros: number;
 	weeklyPomodoros: number;
 	enableGoals: boolean;
+}
+
+export interface BreakActivitiesSettings {
+	enabled: boolean;
+	showDuration: boolean;
+	categories: ('physical' | 'mental' | 'creative' | 'social' | 'relaxation')[];
 }
 
 export interface SettingsState {
@@ -61,6 +81,7 @@ export interface SettingsState {
 	notificationSettings: NotificationSettings;
 	integrationSettings: IntegrationSettings;
 	goalsSettings: GoalsSettings;
+	breakActivitiesSettings: BreakActivitiesSettings;
 }
 
 const defaultSettings: SettingsState = {
@@ -89,7 +110,8 @@ const defaultSettings: SettingsState = {
 			pomodoro: '#f67280',
 			shortBreak: '#82ccdd',
 			longBreak: '#78e08f'
-		}
+		},
+		customThemes: []
 	},
 	notificationSettings: {
 		reminder: false,
@@ -101,12 +123,19 @@ const defaultSettings: SettingsState = {
 	},
 	integrationSettings: {
 		todoistConnected: false,
-		webhookUrl: null
+		webhookUrl: null,
+		webhookEvents: ['sessionEnd'],
+		webhookEnabled: false
 	},
 	goalsSettings: {
 		dailyPomodoros: 8,
 		weeklyPomodoros: 40,
 		enableGoals: true
+	},
+	breakActivitiesSettings: {
+		enabled: true,
+		showDuration: true,
+		categories: ['physical', 'mental', 'creative', 'social', 'relaxation']
 	}
 };
 

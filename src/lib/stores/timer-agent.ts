@@ -3,6 +3,8 @@ import { settingsAgent } from './settings-agent';
 import { taskAgent } from './task-agent';
 import { sessionHistoryAgent } from './session-history-agent';
 import { goalsAgent } from './goals-agent';
+import { breakActivitiesAgent } from './break-activities-agent';
+import { webhookService } from '../services/webhook-service';
 import { playAlarmFile, startTickingSound, stopTickingSound } from '$lib/audio/sounds';
 
 export type TimerMode = 'Pomodoro' | 'ShortBreak' | 'LongBreak';
@@ -154,6 +156,9 @@ function createTimerAgent() {
 			// Record session start time
 			currentSessionStartTime = new Date();
 
+			// Send webhook for session start
+			webhookService.sendWebhook('sessionStart', newState.currentMode, getDurationForMode(newState.currentMode));
+
 			// Start ticking sound if in Pomodoro mode
 			if (newState.currentMode === 'Pomodoro') {
 				const soundSettings = settingsAgent.getSetting('soundSettings') as {
@@ -206,7 +211,7 @@ function createTimerAgent() {
 						}
 
 						const sessionDuration = getDurationForMode(state.currentMode);
-						sessionHistoryAgent.recordSession(
+						const sessionId = sessionHistoryAgent.recordSession(
 							state.currentMode,
 							currentSessionStartTime,
 							sessionDuration,
@@ -214,6 +219,9 @@ function createTimerAgent() {
 							taskName
 						);
 						currentSessionStartTime = null;
+
+						// Send webhook for session end
+						webhookService.sendWebhook('sessionEnd', state.currentMode, sessionDuration, sessionId);
 					}
 
 					// Handle end-of-session: alarm and mode transitions
@@ -252,6 +260,12 @@ function createTimerAgent() {
 						// Check if long break is needed (every 4 pomodoros)
 						nextMode =
 							pomodorosCompleted % getLongBreakInterval() === 0 ? 'LongBreak' : 'ShortBreak';
+
+						// Generate new break activity for the upcoming break
+						breakActivitiesAgent.generateNewActivity();
+
+						// Send webhook for break start
+						webhookService.sendWebhook('breakStart', nextMode, getDurationForMode(nextMode));
 					} else {
 						// After break, go back to Pomodoro
 						nextMode = 'Pomodoro';
@@ -342,6 +356,12 @@ function createTimerAgent() {
 			// Stop ticking sound when switching modes
 			stopTickingSound();
 			currentSessionStartTime = null; // Reset session start time on mode switch
+
+			// Generate new break activity if switching to a break mode
+			if (mode === 'ShortBreak' || mode === 'LongBreak') {
+				breakActivitiesAgent.generateNewActivity();
+			}
+
 			return {
 				...state,
 				currentMode: mode,

@@ -70,9 +70,10 @@ function createSessionHistoryAgent() {
 		duration: number,
 		taskId?: string | null,
 		taskName?: string | null
-	): void {
+	): string {
+		const sessionId = generateId();
 		const session: SessionRecord = {
-			id: generateId(),
+			id: sessionId,
 			mode,
 			startTime,
 			endTime: new Date(),
@@ -85,6 +86,8 @@ function createSessionHistoryAgent() {
 			const newSessions = [session, ...state.sessions].slice(0, MAX_SESSIONS);
 			return { sessions: newSessions };
 		});
+
+		return sessionId;
 	}
 
 	function clearHistory(): void {

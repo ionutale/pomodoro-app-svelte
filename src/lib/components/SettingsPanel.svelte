@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
 	import { settingsAgent } from '$lib/stores/settings-agent';
+	import ThemeEditor from './ThemeEditor.svelte';
 
 	type TimerSettings = {
 		pomodoro: number;
@@ -17,10 +18,32 @@
 		muted?: boolean;
 	};
 
+	type GoalsSettings = {
+		enableGoals: boolean;
+		dailyPomodoros: number;
+		weeklyPomodoros: number;
+	};
+
+	type BreakActivitiesSettings = {
+		enabled: boolean;
+		showDuration: boolean;
+		categories: string[];
+	};
+
+	type IntegrationSettings = {
+		todoistConnected: boolean;
+		webhookUrl: string | null;
+		webhookEvents: string[];
+		webhookEnabled: boolean;
+	};
+
 	let settings = {
 		timerSettings: settingsAgent.getSetting('timerSettings') as TimerSettings,
 		soundSettings: settingsAgent.getSetting('soundSettings') as SoundSettings,
-		themeSettings: settingsAgent.getSetting('themeSettings') as any
+		themeSettings: settingsAgent.getSetting('themeSettings') as any,
+		goalsSettings: settingsAgent.getSetting('goalsSettings') as GoalsSettings,
+		breakActivitiesSettings: settingsAgent.getSetting('breakActivitiesSettings') as BreakActivitiesSettings,
+		integrationSettings: settingsAgent.getSetting('integrationSettings') as IntegrationSettings
 	};
 	const unsub = settingsAgent.subscribe((s) => (settings = s as typeof settings));
 	onDestroy(() => unsub());
@@ -116,22 +139,114 @@
 		</label>
 
 		<hr style="grid-column: 1 / -1; opacity:.3;" />
+		<div style="grid-column: 1 / -1;">
+			<ThemeEditor />
+		</div>
+
+		<hr style="grid-column: 1 / -1; opacity:.3;" />
 		<label class="toggle">
-			<input type="checkbox" bind:checked={settings.themeSettings.useGradient} on:change={(e)=>update('themeSettings.useGradient', e.currentTarget.checked)} />
-			<span>Use Gradient Background</span>
+			<input type="checkbox" bind:checked={settings.goalsSettings.enableGoals} on:change={(e)=>update('goalsSettings.enableGoals', e.currentTarget.checked)} />
+			<span>Enable Goals</span>
 		</label>
 		<label>
-			<span>Pomodoro Color</span>
-			<input type="color" bind:value={settings.themeSettings.colors.pomodoro} on:input={(e)=>update('themeSettings.colors.pomodoro', e.currentTarget.value)} />
+			<span>Daily Goal (Pomodoros)</span>
+			<input
+				type="number"
+				min="1"
+				max="50"
+				bind:value={settings.goalsSettings.dailyPomodoros}
+				on:change={(e) => update('goalsSettings.dailyPomodoros', Number(e.currentTarget.value))}
+			/>
 		</label>
 		<label>
-			<span>Short Break Color</span>
-			<input type="color" bind:value={settings.themeSettings.colors.shortBreak} on:input={(e)=>update('themeSettings.colors.shortBreak', e.currentTarget.value)} />
+			<span>Weekly Goal (Pomodoros)</span>
+			<input
+				type="number"
+				min="1"
+				max="100"
+				bind:value={settings.goalsSettings.weeklyPomodoros}
+				on:change={(e) => update('goalsSettings.weeklyPomodoros', Number(e.currentTarget.value))}
+			/>
+		</label>
+
+		<hr style="grid-column: 1 / -1; opacity:.3;" />
+		<label class="toggle">
+			<input type="checkbox" bind:checked={settings.breakActivitiesSettings.enabled} on:change={(e)=>update('breakActivitiesSettings.enabled', e.currentTarget.checked)} />
+			<span>Enable Break Activities</span>
+		</label>
+		<label class="toggle">
+			<input type="checkbox" bind:checked={settings.breakActivitiesSettings.showDuration} on:change={(e)=>update('breakActivitiesSettings.showDuration', e.currentTarget.checked)} />
+			<span>Show Activity Duration</span>
+		</label>
+
+		<hr style="grid-column: 1 / -1; opacity:.3;" />
+		<label class="toggle">
+			<input type="checkbox" bind:checked={settings.integrationSettings.webhookEnabled} on:change={(e)=>update('integrationSettings.webhookEnabled', e.currentTarget.checked)} />
+			<span>Enable Webhooks</span>
 		</label>
 		<label>
-			<span>Long Break Color</span>
-			<input type="color" bind:value={settings.themeSettings.colors.longBreak} on:input={(e)=>update('themeSettings.colors.longBreak', e.currentTarget.value)} />
+			<span>Webhook URL</span>
+			<input
+				type="url"
+				placeholder="https://example.com/webhook"
+				bind:value={settings.integrationSettings.webhookUrl}
+				on:change={(e) => update('integrationSettings.webhookUrl', e.currentTarget.value)}
+			/>
 		</label>
+		<div class="webhook-events" style="grid-column: 1 / -1;">
+			<span style="font-size: 0.9rem; color: #666; margin-bottom: 0.5rem; display: block;">Webhook Events:</span>
+			<label class="toggle">
+				<input
+					type="checkbox"
+					checked={settings.integrationSettings.webhookEvents?.includes('sessionStart')}
+					on:change={(e) => {
+						const events = [...(settings.integrationSettings.webhookEvents || [])];
+						if (e.currentTarget.checked) {
+							if (!events.includes('sessionStart')) events.push('sessionStart');
+						} else {
+							const index = events.indexOf('sessionStart');
+							if (index > -1) events.splice(index, 1);
+						}
+						update('integrationSettings.webhookEvents', events);
+					}}
+				/>
+				<span>Session Start</span>
+			</label>
+			<label class="toggle">
+				<input
+					type="checkbox"
+					checked={settings.integrationSettings.webhookEvents?.includes('sessionEnd')}
+					on:change={(e) => {
+						const events = [...(settings.integrationSettings.webhookEvents || [])];
+						if (e.currentTarget.checked) {
+							if (!events.includes('sessionEnd')) events.push('sessionEnd');
+						} else {
+							const index = events.indexOf('sessionEnd');
+							if (index > -1) events.splice(index, 1);
+						}
+						update('integrationSettings.webhookEvents', events);
+					}}
+				/>
+				<span>Session End</span>
+			</label>
+			<label class="toggle">
+				<input
+					type="checkbox"
+					checked={settings.integrationSettings.webhookEvents?.includes('breakStart')}
+					on:change={(e) => {
+						const events = [...(settings.integrationSettings.webhookEvents || [])];
+						if (e.currentTarget.checked) {
+							if (!events.includes('breakStart')) events.push('breakStart');
+						} else {
+							const index = events.indexOf('breakStart');
+							if (index > -1) events.splice(index, 1);
+						}
+						update('integrationSettings.webhookEvents', events);
+					}}
+				/>
+				<span>Break Start</span>
+			</label>
+		</div>
 	</div>
 </section>
 

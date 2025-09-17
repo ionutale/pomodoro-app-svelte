@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
 	import { timerAgent, type TimerMode } from '$lib/stores/timer-agent';
+	import BreakActivity from './BreakActivity.svelte';
 
 	type TimerState = {
 		currentMode: TimerMode;
@@ -50,6 +51,8 @@
 			{timeDisplay}
 		</div>
 	</div>
+
+	<BreakActivity />
 
 	<div class="timer-controls">
 		<button
