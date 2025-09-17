@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
 	import { timerAgent, type TimerMode } from '$lib/stores/timer-agent';
+	import { settingsAgent, type TimerSettings } from '$lib/stores/settings-agent';
 	import BreakActivity from './BreakActivity.svelte';
 
 	type TimerState = {
@@ -15,11 +16,34 @@
 	};
 
 	const unsubscribe = timerAgent.subscribe((state) => (timerState = state as TimerState));
-	onDestroy(() => unsubscribe());
+
+	let timerSettings: TimerSettings = settingsAgent.getSetting('timerSettings') as TimerSettings;
+	const unsubscribeSettings = settingsAgent.subscribe(() => {
+		timerSettings = settingsAgent.getSetting('timerSettings') as TimerSettings;
+	});
+
+	onDestroy(() => {
+		unsubscribe();
+		unsubscribeSettings?.();
+	});
 
 	$: timeDisplay = formatTime(timerState.timeRemaining);
 	$: currentMode = timerState.currentMode;
 	$: timerStatus = timerState.timerStatus;
+	$: totalSeconds = (function () {
+		const ts = timerSettings;
+		switch (currentMode) {
+			case 'Pomodoro':
+				return (ts?.pomodoro ?? 25) * 60;
+			case 'ShortBreak':
+				return (ts?.shortBreak ?? 5) * 60;
+			case 'LongBreak':
+				return (ts?.longBreak ?? 15) * 60;
+		}
+	})();
+	$: progress = Math.max(0, Math.min(1, timerState.timeRemaining / totalSeconds));
+	const R = 140; // radius
+	const C = 2 * Math.PI * R;
 
 	function formatTime(seconds: number): string {
 		const mins = Math.floor(seconds / 60);
@@ -48,6 +72,18 @@
 	<div class="timer-display">
 		<div class="mode-indicator">{currentMode}</div>
 		<div class="time-outer">
+			<svg class="ring" viewBox="0 0 320 320" width="100%" height="100%" aria-hidden="true">
+				<circle class="ring-bg" cx="160" cy="160" r={R} />
+				<circle
+					class="ring-fg"
+					cx="160"
+					cy="160"
+					r={R}
+					stroke-dasharray={C}
+					stroke-dashoffset={C - C * progress}
+					pathLength={C}
+				/>
+			</svg>
 			<div class="time-display" class:running={timerStatus === 'running'}>
 				{timeDisplay}
 			</div>
@@ -135,6 +171,25 @@
 		box-shadow:
 			inset 0 1px 4px rgba(255, 255, 255, 0.5),
 			0 20px 40px rgba(0, 0, 0, 0.08);
+	}
+
+	.ring {
+		position: absolute;
+		inset: 0;
+	}
+	.ring-bg {
+		fill: none;
+		stroke: rgba(16, 24, 40, 0.08);
+		stroke-width: 14;
+	}
+	.ring-fg {
+		fill: none;
+		stroke: var(--ring-color, #0f172a);
+		stroke-width: 14;
+		stroke-linecap: round;
+		transform: rotate(-90deg);
+		transform-origin: 50% 50%;
+		transition: stroke-dashoffset 0.5s ease;
 	}
 	.time-display {
 		font-size: clamp(3rem, 9vw, 4.5rem);

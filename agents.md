@@ -279,4 +279,7 @@ The following are lists of accepted string literal values for specific settings 
 
 - add a navigation bar
 - the navigation bar needs to have the same colors as the theme colors
-- the theme colors needs to be colors that safari supports for the address bar
+- the theme colors needs to be colors that safari supports for the address bar using the
+<meta name="theme-color" content="#colorcode">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
