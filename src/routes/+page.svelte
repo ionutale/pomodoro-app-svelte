@@ -5,6 +5,7 @@
 	import { timerAgent, type TimerMode } from '$lib/stores/timer-agent';
 	import { settingsAgent } from '$lib/stores/settings-agent';
 	import SettingsPanel from '$lib/components/SettingsPanel.svelte';
+	import SessionHistory from '$lib/components/SessionHistory.svelte';
 
 	let mode: TimerMode = 'Pomodoro';
 	const unsub = timerAgent.subscribe((s: { currentMode: TimerMode }) => (mode = s.currentMode));
@@ -67,6 +68,7 @@
 		<Timer />
 		<TaskList />
 		<SettingsPanel />
+		<SessionHistory />
 	</div>
 </main>
 

@@ -2,6 +2,7 @@ import { writable } from 'svelte/store';
 import { settingsAgent } from './settings-agent';
 import { taskAgent } from './task-agent';
 import { sessionHistoryAgent } from './session-history-agent';
+import { goalsAgent } from './goals-agent';
 import { playAlarmFile, startTickingSound, stopTickingSound } from '$lib/audio/sounds';
 
 export type TimerMode = 'Pomodoro' | 'ShortBreak' | 'LongBreak';
@@ -246,6 +247,8 @@ function createTimerAgent() {
 						if (activeTaskId) {
 							taskAgent.incrementActualPomodoros(activeTaskId);
 						}
+						// Record pomodoro for goals tracking
+						goalsAgent.recordPomodoro();
 						// Check if long break is needed (every 4 pomodoros)
 						nextMode =
 							pomodorosCompleted % getLongBreakInterval() === 0 ? 'LongBreak' : 'ShortBreak';

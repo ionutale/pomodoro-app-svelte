@@ -48,12 +48,19 @@ export interface IntegrationSettings {
 	webhookUrl: string | null;
 }
 
+export interface GoalsSettings {
+	dailyPomodoros: number;
+	weeklyPomodoros: number;
+	enableGoals: boolean;
+}
+
 export interface SettingsState {
 	timerSettings: TimerSettings;
 	soundSettings: SoundSettings;
 	themeSettings: ThemeSettings;
 	notificationSettings: NotificationSettings;
 	integrationSettings: IntegrationSettings;
+	goalsSettings: GoalsSettings;
 }
 
 const defaultSettings: SettingsState = {
@@ -95,6 +102,11 @@ const defaultSettings: SettingsState = {
 	integrationSettings: {
 		todoistConnected: false,
 		webhookUrl: null
+	},
+	goalsSettings: {
+		dailyPomodoros: 8,
+		weeklyPomodoros: 40,
+		enableGoals: true
 	}
 };
 
