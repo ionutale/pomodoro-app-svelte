@@ -110,6 +110,28 @@
 				on:change={(e) => update('soundSettings.alarmRepeat', Number(e.currentTarget.value))}
 			/>
 		</label>
+		<label class="toggle">
+			<input type="checkbox" bind:checked={settings.soundSettings.muted} on:change={(e)=>update('soundSettings.muted', e.currentTarget.checked)} />
+			<span>Mute Alarm</span>
+		</label>
+
+		<hr style="grid-column: 1 / -1; opacity:.3;" />
+		<label class="toggle">
+			<input type="checkbox" bind:checked={settings.themeSettings.useGradient} on:change={(e)=>update('themeSettings.useGradient', e.currentTarget.checked)} />
+			<span>Use Gradient Background</span>
+		</label>
+		<label>
+			<span>Pomodoro Color</span>
+			<input type="color" bind:value={settings.themeSettings.colors.pomodoro} on:input={(e)=>update('themeSettings.colors.pomodoro', e.currentTarget.value)} />
+		</label>
+		<label>
+			<span>Short Break Color</span>
+			<input type="color" bind:value={settings.themeSettings.colors.shortBreak} on:input={(e)=>update('themeSettings.colors.shortBreak', e.currentTarget.value)} />
+		</label>
+		<label>
+			<span>Long Break Color</span>
+			<input type="color" bind:value={settings.themeSettings.colors.longBreak} on:input={(e)=>update('themeSettings.colors.longBreak', e.currentTarget.value)} />
+		</label>
 	</div>
 </section>
 
@@ -138,28 +160,6 @@
 	}
 	input[type='number'],
 	input[type='range'] {
-		<label class="toggle">
-			<input type="checkbox" bind:checked={settings.soundSettings.muted} on:change={(e)=>update('soundSettings.muted', e.currentTarget.checked)} />
-			<span>Mute Alarm</span>
-		</label>
-
-		<hr style="grid-column: 1 / -1; opacity:.3;" />
-		<label class="toggle">
-			<input type="checkbox" bind:checked={settings.themeSettings.useGradient} on:change={(e)=>update('themeSettings.useGradient', e.currentTarget.checked)} />
-			<span>Use Gradient Background</span>
-		</label>
-		<label>
-			<span>Pomodoro Color</span>
-			<input type="color" bind:value={settings.themeSettings.colors.pomodoro} on:input={(e)=>update('themeSettings.colors.pomodoro', e.currentTarget.value)} />
-		</label>
-		<label>
-			<span>Short Break Color</span>
-			<input type="color" bind:value={settings.themeSettings.colors.shortBreak} on:input={(e)=>update('themeSettings.colors.shortBreak', e.currentTarget.value)} />
-		</label>
-		<label>
-			<span>Long Break Color</span>
-			<input type="color" bind:value={settings.themeSettings.colors.longBreak} on:input={(e)=>update('themeSettings.colors.longBreak', e.currentTarget.value)} />
-		</label>
 		padding: 0.5rem;
 		border: 1px solid #ddd;
 		border-radius: 8px;

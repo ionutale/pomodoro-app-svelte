@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onDestroy } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { taskAgent } from '$lib/stores/task-agent';
 
 	type Task = {
@@ -10,9 +10,16 @@
 		isComplete: boolean;
 	};
 
-	type TaskState = { taskList: Task[]; activeTaskId: string | null };
+	type TaskTemplate = {
+		id: string;
+		name: string;
+		estimatedPomodoros: number;
+		note?: string | null;
+	};
 
-	let taskState: TaskState = { taskList: [], activeTaskId: null };
+	type TaskState = { taskList: Task[]; activeTaskId: string | null; templates: TaskTemplate[] };
+
+	let taskState: TaskState = { taskList: [], activeTaskId: null, templates: [] };
 	let newTaskName = '';
 	let estimatedPomodoros = 1;
 
@@ -21,6 +28,7 @@
 
 	$: tasks = taskState.taskList;
 	$: activeTaskId = taskState.activeTaskId;
+	$: templates = taskState.templates;
 
 	function addTask() {
 		if (newTaskName.trim()) {
@@ -50,7 +58,38 @@
 		taskAgent.deleteTask(taskId);
 	}
 
+	function saveAsTemplate(task: Task) {
+		taskAgent.saveAsTemplate(task);
+	}
+
+	function createTaskFromTemplate(templateId: string) {
+		taskAgent.createTaskFromTemplate(templateId);
+	}
+
+	function deleteTemplate(templateId: string) {
+		taskAgent.deleteTemplate(templateId);
+	}
+
 	function handleKeydown(event: KeyboardEvent) {
+		// Handle Ctrl+I and Ctrl+D for active task
+		if (event.ctrlKey && activeTaskId) {
+			if (event.key === 'i' || event.key === 'I') {
+				event.preventDefault();
+				incrementEstimate(activeTaskId);
+			} else if (event.key === 'd' || event.key === 'D') {
+				event.preventDefault();
+				decrementEstimate(activeTaskId);
+			}
+		}
+	}
+
+	// Add keyboard event listener
+	onMount(() => {
+		document.addEventListener('keydown', handleKeydown);
+		return () => document.removeEventListener('keydown', handleKeydown);
+	});
+
+	function handleTaskKeydown(event: KeyboardEvent) {
 		if (event.key === 'Enter') {
 			addTask();
 		}
@@ -63,7 +102,7 @@
 			type="text"
 			placeholder="What are you working on?"
 			bind:value={newTaskName}
-			on:keydown={handleKeydown}
+			on:keydown={handleTaskKeydown}
 		/>
 		<input type="number" min="1" max="10" bind:value={estimatedPomodoros} style="width: 60px;" />
 		<button on:click={addTask} disabled={!newTaskName.trim()}> Add Task </button>
@@ -106,6 +145,10 @@
 						{task.id === activeTaskId ? 'Active' : 'Set Active'}
 					</button>
 
+					<button class="template-btn" on:click={() => saveAsTemplate(task)} title="Save as Template">
+						★
+					</button>
+
 					<button class="delete-btn" on:click={() => deleteTask(task.id)}> × </button>
 				</div>
 			</div>
@@ -116,6 +159,30 @@
 		<div class="task-actions">
 			<button on:click={() => taskAgent.clearFinishedTasks()}> Clear Finished </button>
 			<button on:click={() => taskAgent.clearAllTasks()}> Clear All </button>
+		</div>
+	{/if}
+
+	{#if templates.length > 0}
+		<div class="templates-section">
+			<h3>Task Templates</h3>
+			<div class="templates-list">
+				{#each templates as template (template.id)}
+					<div class="template-item">
+						<div class="template-info">
+							<span class="template-name">{template.name}</span>
+							<span class="template-estimate">({template.estimatedPomodoros} pomodoros)</span>
+						</div>
+						<div class="template-controls">
+							<button class="use-template-btn" on:click={() => createTaskFromTemplate(template.id)}>
+								Use Template
+							</button>
+							<button class="delete-template-btn" on:click={() => deleteTemplate(template.id)}>
+								×
+							</button>
+						</div>
+					</div>
+				{/each}
+			</div>
 		</div>
 	{/if}
 </div>
@@ -311,5 +378,108 @@
 
 	.task-actions button:hover {
 		background-color: #f8f9fa;
+	}
+
+	.templates-section {
+		margin-top: 2rem;
+		padding: 1rem;
+		border: 1px solid #ddd;
+		border-radius: 0.5rem;
+		background-color: #f9f9f9;
+	}
+
+	.templates-section h3 {
+		margin: 0 0 1rem 0;
+		font-size: 1.1rem;
+		color: #333;
+	}
+
+	.templates-list {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.template-item {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0.75rem;
+		border: 1px solid #ddd;
+		border-radius: 0.5rem;
+		background-color: white;
+	}
+
+	.template-info {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+	}
+
+	.template-name {
+		font-weight: 500;
+	}
+
+	.template-estimate {
+		font-size: 0.8rem;
+		color: #666;
+	}
+
+	.template-controls {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.use-template-btn {
+		padding: 0.25rem 0.75rem;
+		border: 1px solid #3498db;
+		background-color: white;
+		color: #3498db;
+		border-radius: 0.25rem;
+		cursor: pointer;
+		font-size: 0.8rem;
+	}
+
+	.use-template-btn:hover {
+		background-color: #3498db;
+		color: white;
+	}
+
+	.delete-template-btn {
+		width: 24px;
+		height: 24px;
+		border: none;
+		background-color: #e74c3c;
+		color: white;
+		border-radius: 50%;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 1rem;
+	}
+
+	.delete-template-btn:hover {
+		background-color: #c0392b;
+	}
+
+	.template-btn {
+		width: 24px;
+		height: 24px;
+		border: 1px solid #f39c12;
+		background-color: white;
+		color: #f39c12;
+		border-radius: 0.25rem;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 0.9rem;
+	}
+
+	.template-btn:hover {
+		background-color: #f39c12;
+		color: white;
 	}
 </style>

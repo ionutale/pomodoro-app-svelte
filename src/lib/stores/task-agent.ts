@@ -11,23 +11,69 @@ export interface Task {
 	externalId?: string | null;
 }
 
+export interface TaskTemplate {
+	id: string;
+	name: string;
+	estimatedPomodoros: number;
+	note?: string | null;
+}
+
 export interface TaskState {
 	taskList: Task[];
 	activeTaskId: string | null;
+	templates: TaskTemplate[];
+}
+
+const STORAGE_KEY = 'pomodoro-tasks';
+
+function loadTasksFromStorage(): TaskState {
+	if (typeof window === 'undefined') {
+		return { taskList: [], activeTaskId: null, templates: [] };
+	}
+
+	try {
+		const stored = localStorage.getItem(STORAGE_KEY);
+		if (stored) {
+			const parsed = JSON.parse(stored);
+			// Convert date strings back to Date objects
+			const taskList = parsed.taskList?.map((task: Task & { dueDate?: string }) => ({
+				...task,
+				dueDate: task.dueDate ? new Date(task.dueDate) : null
+			})) || [];
+			return {
+				taskList,
+				activeTaskId: parsed.activeTaskId || null,
+				templates: parsed.templates || []
+			};
+		}
+	} catch (error) {
+		console.warn('Failed to load tasks from localStorage:', error);
+	}
+
+	return { taskList: [], activeTaskId: null, templates: [] };
+}
+
+function saveTasksToStorage(state: TaskState): void {
+	if (typeof window === 'undefined') return;
+
+	try {
+		localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+	} catch (error) {
+		console.warn('Failed to save tasks to localStorage:', error);
+	}
 }
 
 function createTaskAgent() {
-	const initialState: TaskState = {
-		taskList: [],
-		activeTaskId: null
-	};
-
+	const initialState = loadTasksFromStorage();
 	const { subscribe, update } = writable<TaskState>(initialState);
 
 	let currentState = initialState;
 
-	// Keep currentState in sync
-	subscribe((state) => (currentState = state));
+	// Keep currentState in sync and save to localStorage
+	subscribe((state) => {
+		currentState = state;
+		saveTasksToStorage(state);
+	});
 
 	function generateId(): string {
 		return `task-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -145,10 +191,35 @@ function createTaskAgent() {
 		}));
 	}
 
-	// Premium feature - not implemented yet
-	function saveAsTemplate(task: Task): void {
-		// TODO: Implement template saving
-		console.log('saveAsTemplate not implemented yet', task);
+	function saveAsTemplate(task: Task): string {
+		const template: TaskTemplate = {
+			id: generateId(),
+			name: task.name,
+			estimatedPomodoros: task.estimatedPomodoros,
+			note: task.note
+		};
+
+		update((state) => ({
+			...state,
+			templates: [...state.templates, template]
+		}));
+
+		return template.id;
+	}
+
+	function createTaskFromTemplate(templateId: string): string | null {
+		const state = currentState;
+		const template = state.templates.find(t => t.id === templateId);
+		if (!template) return null;
+
+		return addTask(template.name, template.estimatedPomodoros);
+	}
+
+	function deleteTemplate(templateId: string): void {
+		update((state) => ({
+			...state,
+			templates: state.templates.filter(t => t.id !== templateId)
+		}));
 	}
 
 	return {
@@ -164,6 +235,8 @@ function createTaskAgent() {
 		clearAllTasks,
 		incrementActualPomodoros,
 		saveAsTemplate,
+		createTaskFromTemplate,
+		deleteTemplate,
 		get activeTaskId() {
 			return currentState.activeTaskId;
 		}

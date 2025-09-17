@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onDestroy } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import Timer from '$lib/components/Timer.svelte';
 	import TaskList from '$lib/components/TaskList.svelte';
 	import { timerAgent, type TimerMode } from '$lib/stores/timer-agent';
@@ -21,6 +21,37 @@
 		return s;
 	});
 	onDestroy(() => unsubRun());
+
+	// Keyboard shortcuts
+	function handleKeydown(event: KeyboardEvent) {
+		// Don't trigger shortcuts when typing in input fields
+		if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) {
+			return;
+		}
+
+		switch (event.code) {
+			case 'Space':
+				event.preventDefault();
+				timerAgent.startTimer();
+				break;
+			case 'KeyR':
+				event.preventDefault();
+				timerAgent.resetTimer();
+				break;
+			case 'KeyT':
+				event.preventDefault();
+				// Cycle through modes: Pomodoro -> ShortBreak -> LongBreak -> Pomodoro
+				const nextMode = mode === 'Pomodoro' ? 'ShortBreak' : mode === 'ShortBreak' ? 'LongBreak' : 'Pomodoro';
+				timerAgent.switchMode(nextMode);
+				break;
+		}
+	}
+
+	// Add keyboard event listener
+	onMount(() => {
+		document.addEventListener('keydown', handleKeydown);
+		return () => document.removeEventListener('keydown', handleKeydown);
+	});
 </script>
 
 <main

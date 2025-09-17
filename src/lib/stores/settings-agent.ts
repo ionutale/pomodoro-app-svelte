@@ -98,12 +98,45 @@ const defaultSettings: SettingsState = {
 	}
 };
 
+const STORAGE_KEY = 'pomodoro-settings';
+
+function loadSettingsFromStorage(): SettingsState {
+	if (typeof window === 'undefined') return defaultSettings;
+
+	try {
+		const stored = localStorage.getItem(STORAGE_KEY);
+		if (stored) {
+			const parsed = JSON.parse(stored);
+			// Merge with defaults to ensure new settings are included
+			return { ...defaultSettings, ...parsed };
+		}
+	} catch (error) {
+		console.warn('Failed to load settings from localStorage:', error);
+	}
+
+	return defaultSettings;
+}
+
+function saveSettingsToStorage(settings: SettingsState): void {
+	if (typeof window === 'undefined') return;
+
+	try {
+		localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+	} catch (error) {
+		console.warn('Failed to save settings to localStorage:', error);
+	}
+}
+
 function createSettingsAgent() {
-	const store = writable<SettingsState>(defaultSettings);
+	const initialSettings = loadSettingsFromStorage();
+	const store = writable<SettingsState>(initialSettings);
 	const { subscribe, update } = store;
-	let currentState: SettingsState = defaultSettings;
+	let currentState: SettingsState = initialSettings;
+
+	// Save to localStorage whenever settings change
 	subscribe((s) => {
 		currentState = s;
+		saveSettingsToStorage(s);
 	});
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
