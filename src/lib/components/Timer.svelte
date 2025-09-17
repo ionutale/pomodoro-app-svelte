@@ -1,41 +1,38 @@
 <script lang="ts">
-	import { timerAgent, type TimerMode } from '$lib/stores/timer-agent';
+  import { onDestroy } from 'svelte';
+  import { timerAgent, type TimerMode } from '$lib/stores/timer-agent';
 
-	let timerState: { currentMode: TimerMode; timerStatus: string; timeRemaining: number };ang="ts">
-	import { timerAgent, type TimerMode } from '$lib/stores/timer-agent';
-	import { settingsAgent } from '$lib/stores/settings-agent';
+  type TimerState = { currentMode: TimerMode; timerStatus: 'running' | 'paused' | 'stopped'; timeRemaining: number };
+  let timerState: TimerState = { currentMode: 'Pomodoro', timerStatus: 'stopped', timeRemaining: 0 };
 
-	let timerState: any;
-	let settings: any;
+  const unsubscribe = timerAgent.subscribe((state) => (timerState = state as TimerState));
+  onDestroy(() => unsubscribe());
 
-	timerAgent.subscribe((state) => (timerState = state));
-	settingsAgent.subscribe((state) => (settings = state));
+  $: timeDisplay = formatTime(timerState.timeRemaining);
+  $: currentMode = timerState.currentMode;
+  $: timerStatus = timerState.timerStatus;
 
-	$: timeDisplay = formatTime(timerState?.timeRemaining || 0);
-	$: currentMode = timerState?.currentMode || 'Pomodoro';
-	$: timerStatus = timerState?.timerStatus || 'stopped';
+  function formatTime(seconds: number): string {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  }
 
-	function formatTime(seconds: number): string {
-		const mins = Math.floor(seconds / 60);
-		const secs = seconds % 60;
-		return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-	}
+  function handleStartPause() {
+    if (timerStatus === 'running') {
+      timerAgent.pauseTimer();
+    } else {
+      timerAgent.startTimer();
+    }
+  }
 
-	function handleStartPause() {
-		if (timerStatus === 'running') {
-			timerAgent.pauseTimer();
-		} else {
-			timerAgent.startTimer();
-		}
-	}
+  function handleReset() {
+    timerAgent.resetTimer();
+  }
 
-	function handleReset() {
-		timerAgent.resetTimer();
-	}
-
-	function handleSwitchMode(mode: TimerMode) {
-		timerAgent.switchMode(mode);
-	}
+  function handleSwitchMode(mode: TimerMode) {
+    timerAgent.switchMode(mode);
+  }
 </script>
 
 <div class="timer-container">

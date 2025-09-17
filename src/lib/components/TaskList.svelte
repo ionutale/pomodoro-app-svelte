@@ -1,22 +1,26 @@
 <script lang="ts">
+	import { onDestroy } from 'svelte';
 	import { taskAgent } from '$lib/stores/task-agent';
 
-	let taskState: { taskList: any[]; activeTaskId: string | null };
+	type Task = {
+		id: string;
+		name: string;
+		estimatedPomodoros: number;
+		actualPomodoros: number;
+		isComplete: boolean;
+	};
+
+	type TaskState = { taskList: Task[]; activeTaskId: string | null };
+
+	let taskState: TaskState = { taskList: [], activeTaskId: null };
 	let newTaskName = '';
 	let estimatedPomodoros = 1;
 
-	taskAgent.subscribe(state => taskState = state);ang="ts">
-	import { taskAgent, type Task } from '$lib/stores/task-agent';
-	import { timerAgent } from '$lib/stores/timer-agent';
+	const unsubscribe = taskAgent.subscribe((state) => (taskState = state));
+	onDestroy(() => unsubscribe());
 
-	let taskState: any;
-	let newTaskName = '';
-	let estimatedPomodoros = 1;
-
-	taskAgent.subscribe((state) => (taskState = state));
-
-	$: tasks = taskState?.taskList || [];
-	$: activeTaskId = taskState?.activeTaskId;
+	$: tasks = taskState.taskList;
+	$: activeTaskId = taskState.activeTaskId;
 
 	function addTask() {
 		if (newTaskName.trim()) {
