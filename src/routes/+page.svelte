@@ -36,18 +36,18 @@
 	.app-container {
 		min-height: 100vh;
 		padding: 2rem;
-		transition: background-color 200ms ease;
+		transition: background 200ms ease;
 	}
 
 	/* Backgrounds per mode */
-	.bg-pomodoro { background-color: #f67280; }
-	.bg-shortbreak { background-color: #82ccdd; }
-	.bg-longbreak { background-color: #78e08f; }
+	.bg-pomodoro { --bg1:#f67280; --bg2:#f78c95; background: linear-gradient(180deg, var(--bg1), var(--bg2)); }
+	.bg-shortbreak { --bg1:#82ccdd; --bg2:#a6dceb; background: linear-gradient(180deg, var(--bg1), var(--bg2)); }
+	.bg-longbreak { --bg1:#78e08f; --bg2:#9bebaa; background: linear-gradient(180deg, var(--bg1), var(--bg2)); }
 
 	/* Slightly darker while running */
-	.app-container.bg-pomodoro:has(.time-display.running) { background-color: #ee5f70; }
-	.app-container.bg-shortbreak:has(.time-display.running) { background-color: #65bfd6; }
-	.app-container.bg-longbreak:has(.time-display.running) { background-color: #61d57c; }
+	.app-container.bg-pomodoro:has(.time-display.running) { --bg1:#ee5f70; --bg2:#f17888; }
+	.app-container.bg-shortbreak:has(.time-display.running) { --bg1:#65bfd6; --bg2:#8dd0e3; }
+	.app-container.bg-longbreak:has(.time-display.running) { --bg1:#61d57c; --bg2:#83dea1; }
 
 	.app-header {
 		text-align: center;

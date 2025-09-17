@@ -123,30 +123,19 @@
 	.control-btn {
 		padding: 0.75rem 1.5rem;
 		border: none;
-		border-radius: 0.5rem;
+		border-radius: 0.75rem;
 		font-size: 1rem;
 		font-weight: 600;
 		cursor: pointer;
-		transition: all 0.2s ease;
+		transition: transform 0.12s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+		box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 	}
 
-	.start-pause {
-		background-color: #27ae60;
-		color: white;
-	}
+	.start-pause { background-color: #27ae60; color: white; }
+	.start-pause:hover:not(:disabled) { background-color: #229954; transform: translateY(-1px); }
 
-	.start-pause:hover:not(:disabled) {
-		background-color: #229954;
-	}
-
-	.reset {
-		background-color: #95a5a6;
-		color: white;
-	}
-
-	.reset:hover {
-		background-color: #7f8c8d;
-	}
+	.reset { background-color: #95a5a6; color: white; }
+	.reset:hover { background-color: #7f8c8d; transform: translateY(-1px); }
 
 	.control-btn:disabled {
 		opacity: 0.5;

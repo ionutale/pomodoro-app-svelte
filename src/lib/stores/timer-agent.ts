@@ -21,7 +21,7 @@ function createTimerAgent() {
 		pomodorosCompletedInCycle: 0
 	};
 
-	const { subscribe, update } = writable<TimerState>(initialState);
+	const { subscribe, update, set } = writable<TimerState>(initialState);
 
 	let intervalId: number | null = null;
 
@@ -45,6 +45,19 @@ function createTimerAgent() {
 		const settings = settingsAgent.getSetting('timerSettings') as { longBreakInterval?: number };
 		return settings?.longBreakInterval || 4;
 	}
+
+	// Keep timeRemaining in sync with settings when timer is not running
+	settingsAgent.subscribe(() => {
+		let snap: TimerState | undefined;
+		const unsub = subscribe((s) => (snap = s));
+		unsub();
+		if (!snap) return;
+		if (snap.timerStatus === 'running') return;
+		const newDuration = getDurationForMode(snap.currentMode);
+		if (snap.timeRemaining !== newDuration) {
+			set({ ...snap, timeRemaining: newDuration });
+		}
+	});
 
 	function startTimer() {
 		update((state) => {
