@@ -47,8 +47,10 @@
 <div class="timer-container">
 	<div class="timer-display">
 		<div class="mode-indicator">{currentMode}</div>
-		<div class="time-display" class:running={timerStatus === 'running'}>
-			{timeDisplay}
+		<div class="time-outer">
+			<div class="time-display" class:running={timerStatus === 'running'}>
+				{timeDisplay}
+			</div>
 		</div>
 	</div>
 
@@ -95,9 +97,9 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: 2rem;
-		padding: 2rem;
-		max-width: 400px;
+		gap: 1.5rem;
+		padding: 1.25rem;
+		max-width: 520px;
 		margin: 0 auto;
 	}
 
@@ -106,60 +108,84 @@
 	}
 
 	.mode-indicator {
-		font-size: 1.2rem;
-		font-weight: 500;
-		color: #666;
-		margin-bottom: 1rem;
+		font-size: 0.9rem;
+		font-weight: 600;
+		color: #0f172a;
+		margin-bottom: 0.75rem;
 		text-transform: uppercase;
-		letter-spacing: 0.1em;
+		letter-spacing: 0.12em;
+		background: rgba(255, 255, 255, 0.6);
+		padding: 0.25rem 0.6rem;
+		border-radius: 999px;
+		border: 1px solid rgba(16, 24, 40, 0.06);
 	}
 
+	.time-outer {
+		display: grid;
+		place-items: center;
+		width: clamp(220px, 40vw, 320px);
+		height: clamp(220px, 40vw, 320px);
+		border-radius: 999px;
+		background: radial-gradient(
+			100% 100% at 50% 0%,
+			rgba(255, 255, 255, 0.45),
+			rgba(255, 255, 255, 0.15)
+		);
+		border: 1px solid rgba(16, 24, 40, 0.06);
+		box-shadow:
+			inset 0 1px 4px rgba(255, 255, 255, 0.5),
+			0 20px 40px rgba(0, 0, 0, 0.08);
+	}
 	.time-display {
-		font-size: 4rem;
-		font-weight: 700;
-		font-family: 'Courier New', monospace;
-		color: #333;
+		font-size: clamp(3rem, 9vw, 4.5rem);
+		font-weight: 800;
+		font-family:
+			ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+			monospace;
+		color: #0b132b;
 		transition: color 0.3s ease;
+		text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
 	}
 
 	.time-display.running {
-		color: #e74c3c;
+		color: #111827;
 	}
 
 	.timer-controls {
 		display: flex;
-		gap: 1rem;
+		gap: 0.75rem;
 	}
 
 	.control-btn {
-		padding: 0.75rem 1.5rem;
+		padding: 0.65rem 1.15rem;
 		border: none;
 		border-radius: 0.75rem;
-		font-size: 1rem;
-		font-weight: 600;
+		font-size: 0.95rem;
+		font-weight: 700;
 		cursor: pointer;
 		transition:
 			transform 0.12s ease,
 			box-shadow 0.2s ease,
 			background-color 0.2s ease;
-		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+		box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
 	}
 
 	.start-pause {
-		background-color: #27ae60;
+		background-color: #111827;
 		color: white;
 	}
 	.start-pause:hover:not(:disabled) {
-		background-color: #229954;
+		background-color: #0b1220;
 		transform: translateY(-1px);
 	}
 
 	.reset {
-		background-color: #95a5a6;
-		color: white;
+		background-color: rgba(255, 255, 255, 0.7);
+		color: #0f172a;
+		border: 1px solid rgba(16, 24, 40, 0.08);
 	}
 	.reset:hover {
-		background-color: #7f8c8d;
+		background-color: rgba(255, 255, 255, 0.85);
 		transform: translateY(-1px);
 	}
 
@@ -174,23 +200,24 @@
 	}
 
 	.mode-btn {
-		padding: 0.5rem 1rem;
-		border: 2px solid #ddd;
-		border-radius: 0.5rem;
-		background-color: white;
-		color: #666;
+		padding: 0.5rem 0.9rem;
+		border: 1px solid rgba(16, 24, 40, 0.12);
+		border-radius: 999px;
+		background-color: rgba(255, 255, 255, 0.7);
+		color: #0f172a;
 		font-size: 0.9rem;
 		cursor: pointer;
 		transition: all 0.2s ease;
 	}
 
 	.mode-btn:hover {
-		border-color: #bbb;
+		border-color: rgba(16, 24, 40, 0.25);
+		background: rgba(255, 255, 255, 0.9);
 	}
 
 	.mode-btn.active {
-		border-color: #3498db;
-		background-color: #3498db;
+		border-color: #0f172a;
+		background-color: #0f172a;
 		color: white;
 	}
 </style>

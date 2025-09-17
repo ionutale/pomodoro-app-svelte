@@ -4,7 +4,12 @@
 	import { settingsAgent } from '$lib/stores/settings-agent';
 	import type { CustomTheme } from '$lib/services/theme-service';
 
-	let themes: { id: string; name: string; colors: { pomodoro: string; shortBreak: string; longBreak: string }; useGradient: boolean }[] = [];
+	let themes: {
+		id: string;
+		name: string;
+		colors: { pomodoro: string; shortBreak: string; longBreak: string };
+		useGradient: boolean;
+	}[] = [];
 	let currentThemeId = 'default';
 	let showThemeEditor = false;
 	let editingTheme: CustomTheme | null = null;
@@ -79,7 +84,10 @@
 		}
 	}
 
-	function getThemePreviewStyle(theme: { colors: { pomodoro: string; shortBreak: string; longBreak: string }; useGradient: boolean }) {
+	function getThemePreviewStyle(theme: {
+		colors: { pomodoro: string; shortBreak: string; longBreak: string };
+		useGradient: boolean;
+	}) {
 		const bg = theme.useGradient
 			? `linear-gradient(135deg, ${theme.colors.pomodoro}, ${theme.colors.shortBreak})`
 			: theme.colors.pomodoro;
@@ -98,9 +106,7 @@
 			</select>
 		</label>
 
-		<button class="create-theme-btn" on:click={startCreatingTheme}>
-			+ Create Theme
-		</button>
+		<button class="create-theme-btn" on:click={startCreatingTheme}> + Create Theme </button>
 	</div>
 
 	<div class="theme-grid">
@@ -110,15 +116,31 @@
 				<div class="theme-info">
 					<h4>{theme.name}</h4>
 					<div class="theme-colors">
-						<div class="color-swatch" style="background-color: {theme.colors.pomodoro}" title="Pomodoro"></div>
-						<div class="color-swatch" style="background-color: {theme.colors.shortBreak}" title="Short Break"></div>
-						<div class="color-swatch" style="background-color: {theme.colors.longBreak}" title="Long Break"></div>
+						<div
+							class="color-swatch"
+							style="background-color: {theme.colors.pomodoro}"
+							title="Pomodoro"
+						></div>
+						<div
+							class="color-swatch"
+							style="background-color: {theme.colors.shortBreak}"
+							title="Short Break"
+						></div>
+						<div
+							class="color-swatch"
+							style="background-color: {theme.colors.longBreak}"
+							title="Long Break"
+						></div>
 					</div>
 				</div>
 				<div class="theme-actions">
 					{#if theme.id !== 'default'}
-						<button class="edit-btn" on:click={() => startEditingTheme(theme)} title="Edit theme">✏️</button>
-						<button class="delete-btn" on:click={() => deleteTheme(theme.id)} title="Delete theme">🗑️</button>
+						<button class="edit-btn" on:click={() => startEditingTheme(theme)} title="Edit theme"
+							>✏️</button
+						>
+						<button class="delete-btn" on:click={() => deleteTheme(theme.id)} title="Delete theme"
+							>🗑️</button
+						>
 					{/if}
 				</div>
 			</div>
@@ -169,7 +191,10 @@
 					</label>
 				</div>
 
-				<div class="theme-preview-large" style={getThemePreviewStyle({ colors: themeColors, useGradient })}>
+				<div
+					class="theme-preview-large"
+					style={getThemePreviewStyle({ colors: themeColors, useGradient })}
+				>
 					<div class="preview-text">Theme Preview</div>
 				</div>
 
@@ -286,7 +311,8 @@
 		opacity: 1;
 	}
 
-	.edit-btn, .delete-btn {
+	.edit-btn,
+	.delete-btn {
 		background: rgba(255, 255, 255, 0.9);
 		border: none;
 		border-radius: 4px;
@@ -346,7 +372,7 @@
 		font-weight: 500;
 	}
 
-	.form-group input[type="text"] {
+	.form-group input[type='text'] {
 		width: 100%;
 		padding: 0.5rem;
 		border: 1px solid #ddd;
@@ -380,7 +406,7 @@
 		font-size: 0.9rem;
 	}
 
-	.color-picker input[type="color"] {
+	.color-picker input[type='color'] {
 		width: 60px;
 		height: 40px;
 		border: none;
@@ -414,7 +440,8 @@
 		margin-top: 2rem;
 	}
 
-	.cancel-btn, .save-btn {
+	.cancel-btn,
+	.save-btn {
 		padding: 0.5rem 1rem;
 		border: none;
 		border-radius: 4px;

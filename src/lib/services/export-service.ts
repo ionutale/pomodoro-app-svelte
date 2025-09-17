@@ -51,10 +51,12 @@ export class ExportService {
 
 		const exportData: ExportData = {
 			exportedAt: new Date().toISOString(),
-			dateRange: dateRange ? {
-				start: dateRange.start.toISOString(),
-				end: dateRange.end.toISOString()
-			} : null
+			dateRange: dateRange
+				? {
+						start: dateRange.start.toISOString(),
+						end: dateRange.end.toISOString()
+					}
+				: null
 		};
 
 		// Collect data based on selected types
@@ -66,10 +68,7 @@ export class ExportService {
 		}
 
 		if (dataTypes.includes('statistics')) {
-			const stats = sessionHistoryAgent.getSessionStats(
-				dateRange?.start,
-				dateRange?.end
-			);
+			const stats = sessionHistoryAgent.getSessionStats(dateRange?.start, dateRange?.end);
 			const totalFocusTime = sessionHistoryAgent.getTotalFocusTime(
 				dateRange?.start,
 				dateRange?.end

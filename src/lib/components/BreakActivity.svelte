@@ -29,23 +29,35 @@
 
 	function getCategoryColor(category: string): string {
 		switch (category) {
-			case 'physical': return '#e74c3c';
-			case 'mental': return '#3498db';
-			case 'creative': return '#9b59b6';
-			case 'social': return '#e67e22';
-			case 'relaxation': return '#27ae60';
-			default: return '#95a5a6';
+			case 'physical':
+				return '#e74c3c';
+			case 'mental':
+				return '#3498db';
+			case 'creative':
+				return '#9b59b6';
+			case 'social':
+				return '#e67e22';
+			case 'relaxation':
+				return '#27ae60';
+			default:
+				return '#95a5a6';
 		}
 	}
 
 	function getCategoryIcon(category: string): string {
 		switch (category) {
-			case 'physical': return '🏃';
-			case 'mental': return '🧠';
-			case 'creative': return '🎨';
-			case 'social': return '👥';
-			case 'relaxation': return '😌';
-			default: return '✨';
+			case 'physical':
+				return '🏃';
+			case 'mental':
+				return '🧠';
+			case 'creative':
+				return '🎨';
+			case 'social':
+				return '👥';
+			case 'relaxation':
+				return '😌';
+			default:
+				return '✨';
 		}
 	}
 
@@ -57,7 +69,10 @@
 {#if isEnabled && currentActivity && (currentMode === 'ShortBreak' || currentMode === 'LongBreak')}
 	<div class="break-activity">
 		<div class="activity-header">
-			<div class="activity-icon" style="background-color: {getCategoryColor(currentActivity.category)}">
+			<div
+				class="activity-icon"
+				style="background-color: {getCategoryColor(currentActivity.category)}"
+			>
 				{getCategoryIcon(currentActivity.category)}
 			</div>
 			<div class="activity-meta">
@@ -75,7 +90,9 @@
 
 			{#if currentActivity.duration}
 				<div class="activity-duration">
-					⏱️ Suggested duration: {currentActivity.duration} minute{currentActivity.duration > 1 ? 's' : ''}
+					⏱️ Suggested duration: {currentActivity.duration} minute{currentActivity.duration > 1
+						? 's'
+						: ''}
 				</div>
 			{/if}
 		</div>

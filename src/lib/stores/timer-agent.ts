@@ -133,7 +133,11 @@ function createTimerAgent() {
 	}
 
 	function showNotification(title: string, body: string) {
-		if (!notificationPermissionGranted || typeof window === 'undefined' || !('Notification' in window)) {
+		if (
+			!notificationPermissionGranted ||
+			typeof window === 'undefined' ||
+			!('Notification' in window)
+		) {
 			return;
 		}
 
@@ -157,7 +161,11 @@ function createTimerAgent() {
 			currentSessionStartTime = new Date();
 
 			// Send webhook for session start
-			webhookService.sendWebhook('sessionStart', newState.currentMode, getDurationForMode(newState.currentMode));
+			webhookService.sendWebhook(
+				'sessionStart',
+				newState.currentMode,
+				getDurationForMode(newState.currentMode)
+			);
 
 			// Start ticking sound if in Pomodoro mode
 			if (newState.currentMode === 'Pomodoro') {
@@ -181,13 +189,18 @@ function createTimerAgent() {
 				const newTimeRemaining = state.timeRemaining - 1;
 
 				// Show reminder notification for last minute
-				if (newTimeRemaining === 60) { // 1 minute left
+				if (newTimeRemaining === 60) {
+					// 1 minute left
 					const notificationSettings = settingsAgent.getSetting('notificationSettings') as {
 						reminder?: boolean;
 					};
 					if (notificationSettings?.reminder) {
-						const modeName = state.currentMode === 'Pomodoro' ? 'Pomodoro session' :
-										state.currentMode === 'ShortBreak' ? 'short break' : 'long break';
+						const modeName =
+							state.currentMode === 'Pomodoro'
+								? 'Pomodoro session'
+								: state.currentMode === 'ShortBreak'
+									? 'short break'
+									: 'long break';
 						showNotification('Pomodoro Timer', `1 minute remaining in your ${modeName}`);
 					}
 				}
@@ -295,7 +308,10 @@ function createTimerAgent() {
 						};
 						if (soundSettings?.tickingSound && soundSettings.tickingSound !== 'None') {
 							setTimeout(() => {
-								startTickingSound(soundSettings.tickingSound!, (soundSettings.tickingVolume || 50) / 100);
+								startTickingSound(
+									soundSettings.tickingSound!,
+									(soundSettings.tickingVolume || 50) / 100
+								);
 							}, 100); // Small delay to ensure timer state is updated
 						}
 					}

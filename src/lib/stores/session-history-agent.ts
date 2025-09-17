@@ -27,11 +27,14 @@ function loadSessionHistoryFromStorage(): SessionHistoryState {
 		if (stored) {
 			const parsed = JSON.parse(stored);
 			// Convert date strings back to Date objects
-			const sessions = parsed.sessions?.map((session: SessionRecord & { startTime?: string; endTime?: string }) => ({
-				...session,
-				startTime: session.startTime ? new Date(session.startTime) : new Date(),
-				endTime: session.endTime ? new Date(session.endTime) : new Date()
-			})) || [];
+			const sessions =
+				parsed.sessions?.map(
+					(session: SessionRecord & { startTime?: string; endTime?: string }) => ({
+						...session,
+						startTime: session.startTime ? new Date(session.startTime) : new Date(),
+						endTime: session.endTime ? new Date(session.endTime) : new Date()
+					})
+				) || [];
 			return { sessions };
 		}
 	} catch (error) {
@@ -95,37 +98,36 @@ function createSessionHistoryAgent() {
 	}
 
 	function getSessionsForDateRange(startDate: Date, endDate: Date): SessionRecord[] {
-		return initialState.sessions.filter(session =>
-			session.startTime >= startDate && session.startTime <= endDate
+		return initialState.sessions.filter(
+			(session) => session.startTime >= startDate && session.startTime <= endDate
 		);
 	}
 
 	function getTotalFocusTime(startDate?: Date, endDate?: Date): number {
-		const sessions = startDate && endDate
-			? getSessionsForDateRange(startDate, endDate)
-			: initialState.sessions;
+		const sessions =
+			startDate && endDate ? getSessionsForDateRange(startDate, endDate) : initialState.sessions;
 
 		return sessions
-			.filter(session => session.mode === 'Pomodoro')
+			.filter((session) => session.mode === 'Pomodoro')
 			.reduce((total, session) => total + session.duration, 0);
 	}
 
 	function getSessionStats(startDate?: Date, endDate?: Date) {
-		const sessions = startDate && endDate
-			? getSessionsForDateRange(startDate, endDate)
-			: initialState.sessions;
+		const sessions =
+			startDate && endDate ? getSessionsForDateRange(startDate, endDate) : initialState.sessions;
 
-		const pomodoroSessions = sessions.filter(s => s.mode === 'Pomodoro');
-		const breakSessions = sessions.filter(s => s.mode !== 'Pomodoro');
+		const pomodoroSessions = sessions.filter((s) => s.mode === 'Pomodoro');
+		const breakSessions = sessions.filter((s) => s.mode !== 'Pomodoro');
 
 		return {
 			totalSessions: sessions.length,
 			pomodoroSessions: pomodoroSessions.length,
 			breakSessions: breakSessions.length,
 			totalFocusTime: pomodoroSessions.reduce((total, s) => total + s.duration, 0),
-			averageSessionLength: pomodoroSessions.length > 0
-				? pomodoroSessions.reduce((total, s) => total + s.duration, 0) / pomodoroSessions.length
-				: 0
+			averageSessionLength:
+				pomodoroSessions.length > 0
+					? pomodoroSessions.reduce((total, s) => total + s.duration, 0) / pomodoroSessions.length
+					: 0
 		};
 	}
 

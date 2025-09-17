@@ -36,10 +36,11 @@ function loadTasksFromStorage(): TaskState {
 		if (stored) {
 			const parsed = JSON.parse(stored);
 			// Convert date strings back to Date objects
-			const taskList = parsed.taskList?.map((task: Task & { dueDate?: string }) => ({
-				...task,
-				dueDate: task.dueDate ? new Date(task.dueDate) : null
-			})) || [];
+			const taskList =
+				parsed.taskList?.map((task: Task & { dueDate?: string }) => ({
+					...task,
+					dueDate: task.dueDate ? new Date(task.dueDate) : null
+				})) || [];
 			return {
 				taskList,
 				activeTaskId: parsed.activeTaskId || null,
@@ -209,7 +210,7 @@ function createTaskAgent() {
 
 	function createTaskFromTemplate(templateId: string): string | null {
 		const state = currentState;
-		const template = state.templates.find(t => t.id === templateId);
+		const template = state.templates.find((t) => t.id === templateId);
 		if (!template) return null;
 
 		return addTask(template.name, template.estimatedPomodoros);
@@ -218,7 +219,7 @@ function createTaskAgent() {
 	function deleteTemplate(templateId: string): void {
 		update((state) => ({
 			...state,
-			templates: state.templates.filter(t => t.id !== templateId)
+			templates: state.templates.filter((t) => t.id !== templateId)
 		}));
 	}
 

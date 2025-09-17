@@ -24,7 +24,7 @@
 	onDestroy(() => unsubscribe());
 
 	$: sessions = sessionState.sessions;
-	$: filteredSessions = sessions.filter(session => {
+	$: filteredSessions = sessions.filter((session) => {
 		if (filterMode !== 'all' && session.mode !== filterMode) return false;
 
 		const now = new Date();
@@ -58,16 +58,20 @@
 
 	function getModeColor(mode: string): string {
 		switch (mode) {
-			case 'Pomodoro': return '#e74c3c';
-			case 'ShortBreak': return '#27ae60';
-			case 'LongBreak': return '#3498db';
-			default: return '#95a5a6';
+			case 'Pomodoro':
+				return '#e74c3c';
+			case 'ShortBreak':
+				return '#27ae60';
+			case 'LongBreak':
+				return '#3498db';
+			default:
+				return '#95a5a6';
 		}
 	}
 </script>
 
 <div class="session-history-container">
-	<button class="history-toggle" on:click={() => showHistory = !showHistory}>
+	<button class="history-toggle" on:click={() => (showHistory = !showHistory)}>
 		📊 Session History {showHistory ? '▼' : '▶'}
 	</button>
 
@@ -138,17 +142,13 @@
 					</div>
 				{/each}
 				{#if filteredSessions.length === 0}
-					<div class="no-sessions">
-						No sessions found for the selected filters.
-					</div>
+					<div class="no-sessions">No sessions found for the selected filters.</div>
 				{/if}
 			</div>
 
 			{#if sessions.length > 0}
 				<div class="history-actions">
-					<button on:click={() => sessionHistoryAgent.clearHistory()}>
-						Clear History
-					</button>
+					<button on:click={() => sessionHistoryAgent.clearHistory()}> Clear History </button>
 				</div>
 			{/if}
 		</div>

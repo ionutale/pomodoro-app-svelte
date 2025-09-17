@@ -41,8 +41,8 @@
 
 		// Calculate additional metrics
 		const sessions = sessionHistoryAgent.getSessionsForDateRange(startDate || new Date(0), endDate);
-		const pomodoroSessions = sessions.filter(s => s.mode === 'Pomodoro');
-		const breakSessions = sessions.filter(s => s.mode !== 'Pomodoro');
+		const pomodoroSessions = sessions.filter((s) => s.mode === 'Pomodoro');
+		const breakSessions = sessions.filter((s) => s.mode !== 'Pomodoro');
 
 		// Calculate streaks and goals
 		const today = new Date();
@@ -55,11 +55,14 @@
 		const currentStreak = goalsAgent.getStreak();
 
 		// Calculate completion rate (sessions that reached full duration)
-		const completedSessions = pomodoroSessions.filter(s => s.duration >= 25 * 60); // Assuming 25 min pomodoro
-		const completionRate = pomodoroSessions.length > 0 ? (completedSessions.length / pomodoroSessions.length) * 100 : 0;
+		const completedSessions = pomodoroSessions.filter((s) => s.duration >= 25 * 60); // Assuming 25 min pomodoro
+		const completionRate =
+			pomodoroSessions.length > 0 ? (completedSessions.length / pomodoroSessions.length) * 100 : 0;
 
 		// Calculate daily averages
-		const daysDiff = startDate ? Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) : 30;
+		const daysDiff = startDate
+			? Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))
+			: 30;
 		const avgDailySessions = sessionStats.totalSessions / Math.max(daysDiff, 1);
 		const avgDailyFocusTime = totalFocusTime / Math.max(daysDiff, 1);
 
@@ -89,19 +92,21 @@
 		}
 
 		chartData = {
-			labels: last7Days.map(date => date.toLocaleDateString('en-US', { weekday: 'short' })),
-			datasets: [{
-				label: 'Focus Time (minutes)',
-				data: last7Days.map(date => {
-					const nextDay = new Date(date);
-					nextDay.setDate(date.getDate() + 1);
-					const focusTime = sessionHistoryAgent.getTotalFocusTime(date, nextDay);
-					return Math.round(focusTime / 60); // Convert to minutes
-				}),
-				backgroundColor: 'rgba(52, 152, 219, 0.6)',
-				borderColor: 'rgba(52, 152, 219, 1)',
-				borderWidth: 1
-			}]
+			labels: last7Days.map((date) => date.toLocaleDateString('en-US', { weekday: 'short' })),
+			datasets: [
+				{
+					label: 'Focus Time (minutes)',
+					data: last7Days.map((date) => {
+						const nextDay = new Date(date);
+						nextDay.setDate(date.getDate() + 1);
+						const focusTime = sessionHistoryAgent.getTotalFocusTime(date, nextDay);
+						return Math.round(focusTime / 60); // Convert to minutes
+					}),
+					backgroundColor: 'rgba(52, 152, 219, 0.6)',
+					borderColor: 'rgba(52, 152, 219, 1)',
+					borderWidth: 1
+				}
+			]
 		};
 	}
 
@@ -126,10 +131,18 @@
 	<div class="stats-header">
 		<h3>📊 Productivity Statistics</h3>
 		<div class="time-range-selector">
-			<button class:active={timeRange === 'today'} on:click={() => timeRange = 'today'}>Today</button>
-			<button class:active={timeRange === 'week'} on:click={() => timeRange = 'week'}>This Week</button>
-			<button class:active={timeRange === 'month'} on:click={() => timeRange = 'month'}>This Month</button>
-			<button class:active={timeRange === 'all'} on:click={() => timeRange = 'all'}>All Time</button>
+			<button class:active={timeRange === 'today'} on:click={() => (timeRange = 'today')}
+				>Today</button
+			>
+			<button class:active={timeRange === 'week'} on:click={() => (timeRange = 'week')}
+				>This Week</button
+			>
+			<button class:active={timeRange === 'month'} on:click={() => (timeRange = 'month')}
+				>This Month</button
+			>
+			<button class:active={timeRange === 'all'} on:click={() => (timeRange = 'all')}
+				>All Time</button
+			>
 		</div>
 	</div>
 
@@ -188,9 +201,17 @@
 			<h4>Today's Progress</h4>
 			<div class="goal-progress">
 				<div class="goal-item">
-					<span class="goal-label">Completed: {stats.todayProgress.pomodorosCompleted} / {stats.todayProgress.goal}</span>
+					<span class="goal-label"
+						>Completed: {stats.todayProgress.pomodorosCompleted} / {stats.todayProgress.goal}</span
+					>
 					<div class="progress-bar">
-						<div class="progress-fill" style="width: {Math.min((stats.todayProgress.pomodorosCompleted / stats.todayProgress.goal) * 100, 100)}%"></div>
+						<div
+							class="progress-fill"
+							style="width: {Math.min(
+								(stats.todayProgress.pomodorosCompleted / stats.todayProgress.goal) * 100,
+								100
+							)}%"
+						></div>
 					</div>
 				</div>
 			</div>
@@ -202,9 +223,17 @@
 			<h4>This Week's Progress</h4>
 			<div class="goal-progress">
 				<div class="goal-item">
-					<span class="goal-label">Completed: {stats.weekProgress.pomodorosCompleted} / {stats.weekProgress.goal}</span>
+					<span class="goal-label"
+						>Completed: {stats.weekProgress.pomodorosCompleted} / {stats.weekProgress.goal}</span
+					>
 					<div class="progress-bar">
-						<div class="progress-fill" style="width: {Math.min((stats.weekProgress.pomodorosCompleted / stats.weekProgress.goal) * 100, 100)}%"></div>
+						<div
+							class="progress-fill"
+							style="width: {Math.min(
+								(stats.weekProgress.pomodorosCompleted / stats.weekProgress.goal) * 100,
+								100
+							)}%"
+						></div>
 					</div>
 				</div>
 			</div>
@@ -457,7 +486,8 @@
 			gap: 0.25rem;
 		}
 
-		.bar-value, .bar-label {
+		.bar-value,
+		.bar-label {
 			font-size: 0.7rem;
 		}
 	}

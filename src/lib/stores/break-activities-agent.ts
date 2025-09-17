@@ -19,7 +19,8 @@ const defaultActivities: BreakActivity[] = [
 	{
 		id: 'stretch',
 		title: 'Stretch Your Body',
-		description: 'Stand up and do some simple stretches - reach for the sky, touch your toes, roll your shoulders.',
+		description:
+			'Stand up and do some simple stretches - reach for the sky, touch your toes, roll your shoulders.',
 		category: 'physical',
 		duration: 2
 	},
@@ -53,21 +54,23 @@ const defaultActivities: BreakActivity[] = [
 	{
 		id: 'eye-exercise',
 		title: 'Eye Exercises',
-		description: 'Look at a distant object for 20 seconds, then close your eyes and relax for 20 seconds.',
+		description:
+			'Look at a distant object for 20 seconds, then close your eyes and relax for 20 seconds.',
 		category: 'physical',
 		duration: 1
 	},
 	{
 		id: 'gratitude',
 		title: 'Practice Gratitude',
-		description: 'Think of 3 things you\'re grateful for today. Write them down if you like.',
+		description: "Think of 3 things you're grateful for today. Write them down if you like.",
 		category: 'mental',
 		duration: 2
 	},
 	{
 		id: 'desk-cleanup',
 		title: 'Clean Your Workspace',
-		description: 'Quickly organize your desk, throw away trash, and create a clean work environment.',
+		description:
+			'Quickly organize your desk, throw away trash, and create a clean work environment.',
 		category: 'physical',
 		duration: 3
 	},
@@ -100,14 +103,16 @@ const defaultActivities: BreakActivity[] = [
 	{
 		id: 'positive-affirmation',
 		title: 'Positive Affirmations',
-		description: 'Repeat positive affirmations to yourself: "I am capable, focused, and productive."',
+		description:
+			'Repeat positive affirmations to yourself: "I am capable, focused, and productive."',
 		category: 'mental',
 		duration: 1
 	},
 	{
 		id: 'desk-yoga',
 		title: 'Desk Yoga',
-		description: 'Try simple yoga poses at your desk: seated cat-cow, seated twists, or neck rolls.',
+		description:
+			'Try simple yoga poses at your desk: seated cat-cow, seated twists, or neck rolls.',
 		category: 'physical',
 		duration: 3
 	},
@@ -214,7 +219,7 @@ function createBreakActivitiesAgent() {
 	function removeActivity(activityId: string): void {
 		update((state) => ({
 			...state,
-			activities: state.activities.filter(a => a.id !== activityId)
+			activities: state.activities.filter((a) => a.id !== activityId)
 		}));
 	}
 

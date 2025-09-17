@@ -83,14 +83,7 @@
 
 					<div class="progress-circle">
 						<svg width="120" height="120" viewBox="0 0 120 120">
-							<circle
-								cx="60"
-								cy="60"
-								r="50"
-								stroke="#e0e0e0"
-								stroke-width="8"
-								fill="none"
-							/>
+							<circle cx="60" cy="60" r="50" stroke="#e0e0e0" stroke-width="8" fill="none" />
 							<circle
 								cx="60"
 								cy="60"
@@ -130,7 +123,16 @@
 					</div>
 
 					<div class="progress-bar">
-						<div class="progress-fill" style="width: {getProgressPercentage(weekProgress.pomodorosCompleted, weekProgress.goal)}%; background-color: {getProgressColor(weekProgress.pomodorosCompleted, weekProgress.goal)}"></div>
+						<div
+							class="progress-fill"
+							style="width: {getProgressPercentage(
+								weekProgress.pomodorosCompleted,
+								weekProgress.goal
+							)}%; background-color: {getProgressColor(
+								weekProgress.pomodorosCompleted,
+								weekProgress.goal
+							)}"
+						></div>
 						<div class="progress-text">
 							{weekProgress.pomodorosCompleted} / {weekProgress.goal} pomodoros
 						</div>

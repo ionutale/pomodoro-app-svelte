@@ -93,7 +93,7 @@ function createGoalsAgent() {
 		const newState = { ...state };
 
 		// Ensure we have today's entry
-		if (!newState.dailyProgress.find(d => d.date === today)) {
+		if (!newState.dailyProgress.find((d) => d.date === today)) {
 			const dailyGoal = settingsAgent.getSetting('goalsSettings.dailyPomodoros') || 8;
 			newState.dailyProgress.push({
 				date: today,
@@ -103,7 +103,7 @@ function createGoalsAgent() {
 		}
 
 		// Ensure we have this week's entry
-		if (!newState.weeklyProgress.find(w => w.weekStart === thisWeek)) {
+		if (!newState.weeklyProgress.find((w) => w.weekStart === thisWeek)) {
 			const weeklyGoal = settingsAgent.getSetting('goalsSettings.weeklyPomodoros') || 40;
 			newState.weeklyProgress.push({
 				weekStart: thisWeek,
@@ -124,13 +124,13 @@ function createGoalsAgent() {
 			const newState = ensureCurrentDayAndWeek(state);
 
 			// Update today's progress
-			const todayEntry = newState.dailyProgress.find(d => d.date === newState.currentDay);
+			const todayEntry = newState.dailyProgress.find((d) => d.date === newState.currentDay);
 			if (todayEntry) {
 				todayEntry.pomodorosCompleted += 1;
 			}
 
 			// Update this week's progress
-			const weekEntry = newState.weeklyProgress.find(w => w.weekStart === newState.currentWeek);
+			const weekEntry = newState.weeklyProgress.find((w) => w.weekStart === newState.currentWeek);
 			if (weekEntry) {
 				weekEntry.pomodorosCompleted += 1;
 			}
@@ -145,14 +145,14 @@ function createGoalsAgent() {
 
 			// Update daily goals
 			const dailyGoal = settingsAgent.getSetting('goalsSettings.dailyPomodoros') || 8;
-			const todayEntry = newState.dailyProgress.find(d => d.date === newState.currentDay);
+			const todayEntry = newState.dailyProgress.find((d) => d.date === newState.currentDay);
 			if (todayEntry) {
 				todayEntry.goal = dailyGoal;
 			}
 
 			// Update weekly goals
 			const weeklyGoal = settingsAgent.getSetting('goalsSettings.weeklyPomodoros') || 40;
-			const weekEntry = newState.weeklyProgress.find(w => w.weekStart === newState.currentWeek);
+			const weekEntry = newState.weeklyProgress.find((w) => w.weekStart === newState.currentWeek);
 			if (weekEntry) {
 				weekEntry.goal = weeklyGoal;
 			}
@@ -163,19 +163,20 @@ function createGoalsAgent() {
 
 	function getTodayProgress(): DailyProgress | null {
 		const state = initialState;
-		return state.dailyProgress.find(d => d.date === state.currentDay) || null;
+		return state.dailyProgress.find((d) => d.date === state.currentDay) || null;
 	}
 
 	function getThisWeekProgress(): WeeklyProgress | null {
 		const state = initialState;
-		return state.weeklyProgress.find(w => w.weekStart === state.currentWeek) || null;
+		return state.weeklyProgress.find((w) => w.weekStart === state.currentWeek) || null;
 	}
 
 	function getStreak(): number {
 		const state = initialState;
 		let streak = 0;
-		const sortedDays = state.dailyProgress
-			.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+		const sortedDays = state.dailyProgress.sort(
+			(a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+		);
 
 		for (const day of sortedDays) {
 			if (day.pomodorosCompleted >= day.goal) {

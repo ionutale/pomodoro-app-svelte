@@ -33,12 +33,12 @@ The internal state of the TimerAgent can be modeled as follows:
 
 The TimerAgent exposes a set of capabilities that allow for direct control over the timer's operation. These actions form the primary user interaction loop with the application's core functionality.
 
-| Capability | Parameters | Description | Preconditions |
-|------------|------------|-------------|---------------|
-| `startTimer()` | None | Begins or resumes the countdown. Sets `timerStatus` to 'running'. | `timerStatus` must be 'paused' or 'stopped'. |
-| `pauseTimer()` | None | Pauses the countdown. Sets `timerStatus` to 'paused'. | `timerStatus` must be 'running'. |
-| `resetTimer()` | None | Resets `timeRemaining` to the configured duration for the `currentMode` and sets `timerStatus` to 'stopped'. | None. |
-| `switchMode(mode)` | `mode: ('Pomodoro' | 'ShortBreak' | 'LongBreak')` | Manually changes the `currentMode` and resets the timer to the new mode's configured duration. | None. |
+| Capability         | Parameters         | Description                                                                                                  | Preconditions                                |
+| ------------------ | ------------------ | ------------------------------------------------------------------------------------------------------------ | -------------------------------------------- | ---------------------------------------------------------------------------------------------- | ----- |
+| `startTimer()`     | None               | Begins or resumes the countdown. Sets `timerStatus` to 'running'.                                            | `timerStatus` must be 'paused' or 'stopped'. |
+| `pauseTimer()`     | None               | Pauses the countdown. Sets `timerStatus` to 'paused'.                                                        | `timerStatus` must be 'running'.             |
+| `resetTimer()`     | None               | Resets `timeRemaining` to the configured duration for the `currentMode` and sets `timerStatus` to 'stopped'. | None.                                        |
+| `switchMode(mode)` | `mode: ('Pomodoro' | 'ShortBreak'                                                                                                 | 'LongBreak')`                                | Manually changes the `currentMode` and resets the timer to the new mode's configured duration. | None. |
 
 ## Section 3: Agent: TaskAgent
 
@@ -112,26 +112,26 @@ integrationSettings:
 
 The following table provides a detailed specification for every user-configurable setting managed by the SettingsAgent.
 
-| Setting Key | Description | Data Type | Accepted Values / Range | Default Value | Requires Premium |
-|-------------|-------------|-----------|-------------------------|---------------|------------------|
-| `timerSettings.pomodoro` | Duration of the focus session. | number | Integer (minutes) | 25 | No |
-| `timerSettings.shortBreak` | Duration of the short break. | number | Integer (minutes) | 5 | No |
-| `timerSettings.longBreak` | Duration of the long break. | number | Integer (minutes) | 15 | No |
-| `timerSettings.autoStartBreaks` | Automatically start breaks after a Pomodoro. | boolean | true / false | false | No |
-| `timerSettings.autoStartPomodoros` | Automatically start Pomodoros after a break. | boolean | true / false | false | No |
-| `timerSettings.longBreakInterval` | Number of Pomodoros before a long break. | number | Integer | 4 | No |
-| `soundSettings.alarmSound` | Sound played at the end of a session. | string (enum) | 'Kitchen', 'Bell', 'Bird', 'Digital', 'Wood' | 'Bell' | No |
-| `soundSettings.alarmVolume` | Volume of the alarm sound. | number | 0 - 100 | 50 | No |
-| `soundSettings.alarmRepeat` | Number of times the alarm repeats. | number | Integer | 1 | No |
-| `soundSettings.tickingSound` | Background sound during sessions. | string (enum) | 'None', 'Ticking Fast', 'Ticking Slow', 'White Noise', 'Brown Noise' | 'None' | No |
-| `soundSettings.tickingVolume` | Volume of the ticking sound. | number | 0 - 100 | 50 | No |
-| `themeSettings.colorTheme` | Main color theme for the timer. | string | Predefined theme identifiers | 'default' | No |
-| `themeSettings.hourFormat` | Time display format. | string | '12h', '24h' | '24h' | No |
-| `themeSettings.darkModeWhenRunning` | Enable dark mode when the timer is active. | boolean | true / false | false | No |
-| `notificationSettings.reminder` | Notify during the last minute of a session. | boolean | true / false | false | No |
-| `notificationSettings.mobileAlarm.enabled` | Enable push notifications to a mobile device. | boolean | true / false | false | No (Requires Account) |
-| `integrationSettings.todoistConnected` | Status of Todoist integration. | boolean | true / false | false | Yes |
-| `integrationSettings.webhookUrl` | Webhook endpoint URL. | string | Valid URL | null | Yes |
+| Setting Key                                | Description                                   | Data Type     | Accepted Values / Range                                              | Default Value | Requires Premium      |
+| ------------------------------------------ | --------------------------------------------- | ------------- | -------------------------------------------------------------------- | ------------- | --------------------- |
+| `timerSettings.pomodoro`                   | Duration of the focus session.                | number        | Integer (minutes)                                                    | 25            | No                    |
+| `timerSettings.shortBreak`                 | Duration of the short break.                  | number        | Integer (minutes)                                                    | 5             | No                    |
+| `timerSettings.longBreak`                  | Duration of the long break.                   | number        | Integer (minutes)                                                    | 15            | No                    |
+| `timerSettings.autoStartBreaks`            | Automatically start breaks after a Pomodoro.  | boolean       | true / false                                                         | false         | No                    |
+| `timerSettings.autoStartPomodoros`         | Automatically start Pomodoros after a break.  | boolean       | true / false                                                         | false         | No                    |
+| `timerSettings.longBreakInterval`          | Number of Pomodoros before a long break.      | number        | Integer                                                              | 4             | No                    |
+| `soundSettings.alarmSound`                 | Sound played at the end of a session.         | string (enum) | 'Kitchen', 'Bell', 'Bird', 'Digital', 'Wood'                         | 'Bell'        | No                    |
+| `soundSettings.alarmVolume`                | Volume of the alarm sound.                    | number        | 0 - 100                                                              | 50            | No                    |
+| `soundSettings.alarmRepeat`                | Number of times the alarm repeats.            | number        | Integer                                                              | 1             | No                    |
+| `soundSettings.tickingSound`               | Background sound during sessions.             | string (enum) | 'None', 'Ticking Fast', 'Ticking Slow', 'White Noise', 'Brown Noise' | 'None'        | No                    |
+| `soundSettings.tickingVolume`              | Volume of the ticking sound.                  | number        | 0 - 100                                                              | 50            | No                    |
+| `themeSettings.colorTheme`                 | Main color theme for the timer.               | string        | Predefined theme identifiers                                         | 'default'     | No                    |
+| `themeSettings.hourFormat`                 | Time display format.                          | string        | '12h', '24h'                                                         | '24h'         | No                    |
+| `themeSettings.darkModeWhenRunning`        | Enable dark mode when the timer is active.    | boolean       | true / false                                                         | false         | No                    |
+| `notificationSettings.reminder`            | Notify during the last minute of a session.   | boolean       | true / false                                                         | false         | No                    |
+| `notificationSettings.mobileAlarm.enabled` | Enable push notifications to a mobile device. | boolean       | true / false                                                         | false         | No (Requires Account) |
+| `integrationSettings.todoistConnected`     | Status of Todoist integration.                | boolean       | true / false                                                         | false         | Yes                   |
+| `integrationSettings.webhookUrl`           | Webhook endpoint URL.                         | string        | Valid URL                                                            | null          | Yes                   |
 
 ## Section 5: Agent: ReportAgent
 
@@ -244,22 +244,23 @@ This section outlines proposed features for future development waves, building u
 
 The Task object is the primary data structure managed by the TaskAgent. Its properties are defined below.
 
-| Field Name | Data Type | Description | Example | Source (Native/Todoist) |
-|------------|-----------|-------------|---------|-------------------------|
-| `id` | string | A unique identifier for the task. | 'task-12345' | Native |
-| `name` | string | The display name or title of the task. | 'Write technical specification' | Native |
-| `estimatedPomodoros` | number | The user's estimate of Pomodoro sessions required. | 4 | Native |
-| `actualPomodoros` | number | The actual number of Pomodoro sessions completed for this task. | 2 | Native |
-| `isComplete` | boolean | The completion status of the task. | false | Native |
-| `note` | string \| null | Additional notes or description for the task. | 'Focus on sections 1-3.' | Todoist |
-| `dueDate` | Date \| null | The due date of the task, used for sorting. | 2023-10-27T23:59:59Z | Todoist |
-| `externalId` | string \| null | The ID of the task in the external system (e.g., Todoist). | 'todoist-98765' | Todoist |
+| Field Name           | Data Type      | Description                                                     | Example                         | Source (Native/Todoist) |
+| -------------------- | -------------- | --------------------------------------------------------------- | ------------------------------- | ----------------------- |
+| `id`                 | string         | A unique identifier for the task.                               | 'task-12345'                    | Native                  |
+| `name`               | string         | The display name or title of the task.                          | 'Write technical specification' | Native                  |
+| `estimatedPomodoros` | number         | The user's estimate of Pomodoro sessions required.              | 4                               | Native                  |
+| `actualPomodoros`    | number         | The actual number of Pomodoro sessions completed for this task. | 2                               | Native                  |
+| `isComplete`         | boolean        | The completion status of the task.                              | false                           | Native                  |
+| `note`               | string \| null | Additional notes or description for the task.                   | 'Focus on sections 1-3.'        | Todoist                 |
+| `dueDate`            | Date \| null   | The due date of the task, used for sorting.                     | 2023-10-27T23:59:59Z            | Todoist                 |
+| `externalId`         | string \| null | The ID of the task in the external system (e.g., Todoist).      | 'todoist-98765'                 | Todoist                 |
 
 ### Enumerations
 
 The following are lists of accepted string literal values for specific settings managed by the SettingsAgent.
 
 **AlarmSound**
+
 - 'Kitchen'
 - 'Bell'
 - 'Bird'
@@ -267,15 +268,15 @@ The following are lists of accepted string literal values for specific settings 
 - 'Wood'
 
 **TickingSound**
+
 - 'None'
 - 'Ticking Fast'
 - 'Ticking Slow'
 - 'White Noise'
 - 'Brown Noise'
 
-
 # WAVE 3
 
- - add a navigation bar
- - the navigation bar needs to have the same colors as the theme colors
- - the theme colors needs to be colors that safari supports for the address bar
+- add a navigation bar
+- the navigation bar needs to have the same colors as the theme colors
+- the theme colors needs to be colors that safari supports for the address bar

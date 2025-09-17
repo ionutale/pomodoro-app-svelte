@@ -22,7 +22,10 @@ export class ThemeService {
 		return ThemeService.instance;
 	}
 
-	getCurrentTheme(): { colors: { pomodoro: string; shortBreak: string; longBreak: string; }; useGradient: boolean } {
+	getCurrentTheme(): {
+		colors: { pomodoro: string; shortBreak: string; longBreak: string };
+		useGradient: boolean;
+	} {
 		const themeSettings = settingsAgent.getSetting('themeSettings') as ThemeSettings;
 		const colorTheme = themeSettings?.colorTheme || 'default';
 
@@ -59,7 +62,12 @@ export class ThemeService {
 		};
 	}
 
-	getAllThemes(): { id: string; name: string; colors: { pomodoro: string; shortBreak: string; longBreak: string }; useGradient: boolean }[] {
+	getAllThemes(): {
+		id: string;
+		name: string;
+		colors: { pomodoro: string; shortBreak: string; longBreak: string };
+		useGradient: boolean;
+	}[] {
 		const themeSettings = settingsAgent.getSetting('themeSettings') as ThemeSettings;
 		const customThemes = themeSettings?.customThemes || [];
 
@@ -80,7 +88,11 @@ export class ThemeService {
 		return themes;
 	}
 
-	saveCustomTheme(name: string, colors: { pomodoro: string; shortBreak: string; longBreak: string }, useGradient: boolean): string {
+	saveCustomTheme(
+		name: string,
+		colors: { pomodoro: string; shortBreak: string; longBreak: string },
+		useGradient: boolean
+	): string {
 		const themeId = `custom-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 		const newTheme: CustomTheme = {
 			id: themeId,
@@ -97,7 +109,12 @@ export class ThemeService {
 		return themeId;
 	}
 
-	updateCustomTheme(themeId: string, name: string, colors: { pomodoro: string; shortBreak: string; longBreak: string }, useGradient: boolean): void {
+	updateCustomTheme(
+		themeId: string,
+		name: string,
+		colors: { pomodoro: string; shortBreak: string; longBreak: string },
+		useGradient: boolean
+	): void {
 		const themeSettings = settingsAgent.getSetting('themeSettings') as ThemeSettings;
 		const customThemes = themeSettings?.customThemes || [];
 		const themeIndex = customThemes.findIndex((t: CustomTheme) => t.id === themeId);
@@ -138,7 +155,9 @@ export class ThemeService {
 
 		const themeSettings = settingsAgent.getSetting('themeSettings') as ThemeSettings;
 		const customThemes = themeSettings?.customThemes || [];
-		const exists = customThemes.some((t: CustomTheme) => t.name.toLowerCase() === name.toLowerCase().trim());
+		const exists = customThemes.some(
+			(t: CustomTheme) => t.name.toLowerCase() === name.toLowerCase().trim()
+		);
 
 		if (exists) {
 			return { valid: false, error: 'A theme with this name already exists' };

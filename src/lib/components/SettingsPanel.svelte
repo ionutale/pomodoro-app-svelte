@@ -42,7 +42,9 @@
 		soundSettings: settingsAgent.getSetting('soundSettings') as SoundSettings,
 		themeSettings: settingsAgent.getSetting('themeSettings') as any,
 		goalsSettings: settingsAgent.getSetting('goalsSettings') as GoalsSettings,
-		breakActivitiesSettings: settingsAgent.getSetting('breakActivitiesSettings') as BreakActivitiesSettings,
+		breakActivitiesSettings: settingsAgent.getSetting(
+			'breakActivitiesSettings'
+		) as BreakActivitiesSettings,
 		integrationSettings: settingsAgent.getSetting('integrationSettings') as IntegrationSettings
 	};
 	const unsub = settingsAgent.subscribe((s) => (settings = s as typeof settings));
@@ -134,7 +136,11 @@
 			/>
 		</label>
 		<label class="toggle">
-			<input type="checkbox" bind:checked={settings.soundSettings.muted} on:change={(e)=>update('soundSettings.muted', e.currentTarget.checked)} />
+			<input
+				type="checkbox"
+				bind:checked={settings.soundSettings.muted}
+				on:change={(e) => update('soundSettings.muted', e.currentTarget.checked)}
+			/>
 			<span>Mute Alarm</span>
 		</label>
 
@@ -145,7 +151,11 @@
 
 		<hr style="grid-column: 1 / -1; opacity:.3;" />
 		<label class="toggle">
-			<input type="checkbox" bind:checked={settings.goalsSettings.enableGoals} on:change={(e)=>update('goalsSettings.enableGoals', e.currentTarget.checked)} />
+			<input
+				type="checkbox"
+				bind:checked={settings.goalsSettings.enableGoals}
+				on:change={(e) => update('goalsSettings.enableGoals', e.currentTarget.checked)}
+			/>
 			<span>Enable Goals</span>
 		</label>
 		<label>
@@ -171,17 +181,29 @@
 
 		<hr style="grid-column: 1 / -1; opacity:.3;" />
 		<label class="toggle">
-			<input type="checkbox" bind:checked={settings.breakActivitiesSettings.enabled} on:change={(e)=>update('breakActivitiesSettings.enabled', e.currentTarget.checked)} />
+			<input
+				type="checkbox"
+				bind:checked={settings.breakActivitiesSettings.enabled}
+				on:change={(e) => update('breakActivitiesSettings.enabled', e.currentTarget.checked)}
+			/>
 			<span>Enable Break Activities</span>
 		</label>
 		<label class="toggle">
-			<input type="checkbox" bind:checked={settings.breakActivitiesSettings.showDuration} on:change={(e)=>update('breakActivitiesSettings.showDuration', e.currentTarget.checked)} />
+			<input
+				type="checkbox"
+				bind:checked={settings.breakActivitiesSettings.showDuration}
+				on:change={(e) => update('breakActivitiesSettings.showDuration', e.currentTarget.checked)}
+			/>
 			<span>Show Activity Duration</span>
 		</label>
 
 		<hr style="grid-column: 1 / -1; opacity:.3;" />
 		<label class="toggle">
-			<input type="checkbox" bind:checked={settings.integrationSettings.webhookEnabled} on:change={(e)=>update('integrationSettings.webhookEnabled', e.currentTarget.checked)} />
+			<input
+				type="checkbox"
+				bind:checked={settings.integrationSettings.webhookEnabled}
+				on:change={(e) => update('integrationSettings.webhookEnabled', e.currentTarget.checked)}
+			/>
 			<span>Enable Webhooks</span>
 		</label>
 		<label>
@@ -194,7 +216,9 @@
 			/>
 		</label>
 		<div class="webhook-events" style="grid-column: 1 / -1;">
-			<span style="font-size: 0.9rem; color: #666; margin-bottom: 0.5rem; display: block;">Webhook Events:</span>
+			<span style="font-size: 0.9rem; color: #666; margin-bottom: 0.5rem; display: block;"
+				>Webhook Events:</span
+			>
 			<label class="toggle">
 				<input
 					type="checkbox"

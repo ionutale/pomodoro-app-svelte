@@ -20,7 +20,12 @@ export class WebhookService {
 		return WebhookService.instance;
 	}
 
-	async sendWebhook(event: WebhookEvent, mode: 'Pomodoro' | 'ShortBreak' | 'LongBreak', duration: number, sessionId?: string): Promise<void> {
+	async sendWebhook(
+		event: WebhookEvent,
+		mode: 'Pomodoro' | 'ShortBreak' | 'LongBreak',
+		duration: number,
+		sessionId?: string
+	): Promise<void> {
 		const integrationSettings = settingsAgent.getSetting('integrationSettings') as {
 			webhookEnabled?: boolean;
 			webhookUrl?: string | null;
