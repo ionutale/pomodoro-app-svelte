@@ -65,6 +65,18 @@
 			? `linear-gradient(180deg, ${brandColor}, color-mix(in srgb, ${brandColor} 80%, white))`
 			: brandColor
 	);
+
+	$effect(() => {
+		// Update meta theme-color tags dynamically on mode/theme changes
+		if (typeof document !== 'undefined') {
+			const light = document.querySelector('meta[name="theme-color"][media*="light"]') as HTMLMetaElement | null;
+			const dark = document.querySelector('meta[name="theme-color"][media*="dark"]') as HTMLMetaElement | null;
+			const base = document.querySelector('meta[name="theme-color"]:not([media])') as HTMLMetaElement | null;
+			if (light) light.content = brandColor;
+			if (dark) dark.content = brandColorDark;
+			if (base) base.content = brandColor;
+		}
+	});
 </script>
 
 <svelte:head>
