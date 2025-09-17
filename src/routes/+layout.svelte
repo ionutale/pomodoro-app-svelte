@@ -43,7 +43,8 @@
 	function darkenHex(hex: string, amount = 0.25): string {
 		const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 		if (!m) return hex;
-		const to = (v: string) => Math.max(0, Math.min(255, Math.round(parseInt(v, 16) * (1 - amount))));
+		const to = (v: string) =>
+			Math.max(0, Math.min(255, Math.round(parseInt(v, 16) * (1 - amount))));
 		const r = to(m[1]).toString(16).padStart(2, '0');
 		const g = to(m[2]).toString(16).padStart(2, '0');
 		const b = to(m[3]).toString(16).padStart(2, '0');
