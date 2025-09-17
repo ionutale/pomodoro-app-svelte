@@ -272,3 +272,10 @@ The following are lists of accepted string literal values for specific settings 
 - 'Ticking Slow'
 - 'White Noise'
 - 'Brown Noise'
+
+
+# WAVE 3
+
+ - add a navigation bar
+ - the navigation bar needs to have the same colors as the theme colors
+ - the theme colors needs to be colors that safari supports for the address bar

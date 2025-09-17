@@ -1,6 +1,7 @@
 import { writable } from 'svelte/store';
 import { settingsAgent } from './settings-agent';
 import { taskAgent } from './task-agent';
+import { sessionHistoryAgent } from './session-history-agent';
 import { playAlarmFile, startTickingSound, stopTickingSound } from '$lib/audio/sounds';
 
 export type TimerMode = 'Pomodoro' | 'ShortBreak' | 'LongBreak';
@@ -62,11 +63,42 @@ function createTimerAgent() {
 	const { subscribe, update, set } = writable<TimerState>(initialState);
 
 	let intervalId: number | null = null;
+	let wasRunningBeforeHidden = false;
+	let currentSessionStartTime: Date | null = null;
 
 	// Save to localStorage when persistent state changes
 	subscribe((state) => {
 		saveTimerToStorage(state);
 	});
+
+	// Auto-pause when tab becomes hidden
+	if (typeof document !== 'undefined') {
+		document.addEventListener('visibilitychange', () => {
+			if (document.hidden) {
+				// Tab became hidden - pause if running
+				update((state) => {
+					if (state.timerStatus === 'running') {
+						wasRunningBeforeHidden = true;
+						if (intervalId) {
+							clearInterval(intervalId);
+							intervalId = null;
+						}
+						// Stop ticking sound when auto-paused
+						stopTickingSound();
+						return { ...state, timerStatus: 'paused' };
+					}
+					return state;
+				});
+			} else {
+				// Tab became visible - resume if it was running before
+				if (wasRunningBeforeHidden) {
+					wasRunningBeforeHidden = false;
+					// Resume the timer
+					startTimer();
+				}
+			}
+		});
+	}
 
 	function getDurationForMode(mode: TimerMode): number {
 		const settings = settingsAgent.getSetting('timerSettings') as {
@@ -118,6 +150,9 @@ function createTimerAgent() {
 			if (state.timerStatus === 'running') return state;
 			const newState = { ...state, timerStatus: 'running' as TimerStatus };
 
+			// Record session start time
+			currentSessionStartTime = new Date();
+
 			// Start ticking sound if in Pomodoro mode
 			if (newState.currentMode === 'Pomodoro') {
 				const soundSettings = settingsAgent.getSetting('soundSettings') as {
@@ -158,6 +193,27 @@ function createTimerAgent() {
 
 					// Stop ticking sound
 					stopTickingSound();
+
+					// Record completed session in history
+					if (currentSessionStartTime) {
+						const activeTaskId = taskAgent.activeTaskId;
+						let taskName = null;
+						if (activeTaskId) {
+							// Get task name from task agent (this is a simplified approach)
+							// In a real implementation, you'd need to expose task names from taskAgent
+							taskName = `Task ${activeTaskId}`;
+						}
+
+						const sessionDuration = getDurationForMode(state.currentMode);
+						sessionHistoryAgent.recordSession(
+							state.currentMode,
+							currentSessionStartTime,
+							sessionDuration,
+							activeTaskId,
+							taskName
+						);
+						currentSessionStartTime = null;
+					}
 
 					// Handle end-of-session: alarm and mode transitions
 					const s = settingsAgent.getSetting('soundSettings') as {
@@ -251,6 +307,8 @@ function createTimerAgent() {
 			}
 			// Stop ticking sound when paused
 			stopTickingSound();
+			wasRunningBeforeHidden = false; // Reset auto-pause flag on manual pause
+			currentSessionStartTime = null; // Reset session start time on pause
 			return { ...state, timerStatus: 'paused' };
 		});
 	}
@@ -263,6 +321,7 @@ function createTimerAgent() {
 			}
 			// Stop ticking sound when reset
 			stopTickingSound();
+			currentSessionStartTime = null; // Reset session start time on reset
 			return {
 				...state,
 				timerStatus: 'stopped',
@@ -279,6 +338,7 @@ function createTimerAgent() {
 			}
 			// Stop ticking sound when switching modes
 			stopTickingSound();
+			currentSessionStartTime = null; // Reset session start time on mode switch
 			return {
 				...state,
 				currentMode: mode,

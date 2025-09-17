@@ -8,6 +8,8 @@
 		estimatedPomodoros: number;
 		actualPomodoros: number;
 		isComplete: boolean;
+		note?: string | null;
+		dueDate?: Date | null;
 	};
 
 	type TaskTemplate = {
@@ -22,6 +24,9 @@
 	let taskState: TaskState = { taskList: [], activeTaskId: null, templates: [] };
 	let newTaskName = '';
 	let estimatedPomodoros = 1;
+	let editingTaskId: string | null = null;
+	let editingNote = '';
+	let editingDueDate = '';
 
 	const unsubscribe = taskAgent.subscribe((state) => (taskState = state));
 	onDestroy(() => unsubscribe());
@@ -68,6 +73,45 @@
 
 	function deleteTemplate(templateId: string) {
 		taskAgent.deleteTemplate(templateId);
+	}
+
+	function startEditingNote(taskId: string) {
+		const task = tasks.find(t => t.id === taskId);
+		if (task) {
+			editingTaskId = taskId;
+			editingNote = task.note || '';
+		}
+	}
+
+	function saveNote(taskId: string) {
+		taskAgent.updateTask(taskId, { note: editingNote.trim() || null });
+		editingTaskId = null;
+		editingNote = '';
+	}
+
+	function cancelNoteEditing() {
+		editingTaskId = null;
+		editingNote = '';
+	}
+
+	function startEditingDueDate(taskId: string) {
+		const task = tasks.find(t => t.id === taskId);
+		if (task) {
+			editingTaskId = taskId;
+			editingDueDate = task.dueDate ? task.dueDate.toISOString().split('T')[0] : '';
+		}
+	}
+
+	function saveDueDate(taskId: string) {
+		const dueDate = editingDueDate ? new Date(editingDueDate) : null;
+		taskAgent.updateTask(taskId, { dueDate });
+		editingTaskId = null;
+		editingDueDate = '';
+	}
+
+	function cancelDueDateEditing() {
+		editingTaskId = null;
+		editingDueDate = '';
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
@@ -117,9 +161,21 @@
 			>
 				<div class="task-content">
 					<input type="checkbox" checked={task.isComplete} on:change={() => toggleTask(task.id)} />
-					<span class="task-name" class:completed-text={task.isComplete}>
-						{task.name}
-					</span>
+					<div class="task-details">
+						<span class="task-name" class:completed-text={task.isComplete}>
+							{task.name}
+						</span>
+						{#if task.note}
+							<div class="task-note">
+								📝 {task.note}
+							</div>
+						{/if}
+						{#if task.dueDate}
+							<div class="task-due-date" class:overdue={task.dueDate < new Date() && !task.isComplete}>
+								📅 {task.dueDate.toLocaleDateString()}
+							</div>
+						{/if}
+					</div>
 				</div>
 
 				<div class="task-controls">
@@ -145,6 +201,14 @@
 						{task.id === activeTaskId ? 'Active' : 'Set Active'}
 					</button>
 
+					<button class="edit-btn" on:click={() => startEditingNote(task.id)} title="Edit Note">
+						📝
+					</button>
+
+					<button class="calendar-btn" on:click={() => startEditingDueDate(task.id)} title="Set Due Date">
+						📅
+					</button>
+
 					<button class="template-btn" on:click={() => saveAsTemplate(task)} title="Save as Template">
 						★
 					</button>
@@ -152,6 +216,40 @@
 					<button class="delete-btn" on:click={() => deleteTask(task.id)}> × </button>
 				</div>
 			</div>
+
+			{#if editingTaskId === task.id}
+				<div class="edit-modal">
+					<div class="edit-modal-content">
+						<h4>Edit Task Details</h4>
+
+						<div class="edit-field">
+							<label for="note-textarea">Note:</label>
+							<textarea
+								id="note-textarea"
+								bind:value={editingNote}
+								placeholder="Add a note..."
+								rows="3"
+							></textarea>
+						</div>
+
+						<div class="edit-field">
+							<label for="due-date-input">Due Date:</label>
+							<input
+								id="due-date-input"
+								type="date"
+								bind:value={editingDueDate}
+								min={new Date().toISOString().split('T')[0]}
+							/>
+						</div>
+
+						<div class="edit-actions">
+							<button on:click={() => saveNote(task.id)}>Save Note</button>
+							<button on:click={() => saveDueDate(task.id)}>Save Date</button>
+							<button on:click={cancelNoteEditing}>Cancel</button>
+						</div>
+					</div>
+				</div>
+			{/if}
 		{/each}
 	</div>
 
@@ -264,9 +362,16 @@
 
 	.task-content {
 		display: flex;
-		align-items: center;
+		align-items: flex-start;
 		gap: 0.75rem;
 		flex: 1;
+	}
+
+	.task-details {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
 	}
 
 	.task-name {
@@ -277,6 +382,24 @@
 	.task-name.completed-text {
 		text-decoration: line-through;
 		color: #666;
+	}
+
+	.task-note {
+		font-size: 0.85rem;
+		color: #666;
+		font-style: italic;
+		margin-left: 0.5rem;
+	}
+
+	.task-due-date {
+		font-size: 0.85rem;
+		color: #27ae60;
+		margin-left: 0.5rem;
+	}
+
+	.task-due-date.overdue {
+		color: #e74c3c;
+		font-weight: 500;
 	}
 
 	.task-controls {
@@ -478,8 +601,127 @@
 		font-size: 0.9rem;
 	}
 
-	.template-btn:hover {
-		background-color: #f39c12;
+	.edit-btn {
+		width: 24px;
+		height: 24px;
+		border: 1px solid #3498db;
+		background-color: white;
+		color: #3498db;
+		border-radius: 0.25rem;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 0.8rem;
+	}
+
+	.edit-btn:hover {
+		background-color: #3498db;
 		color: white;
+	}
+
+	.calendar-btn {
+		width: 24px;
+		height: 24px;
+		border: 1px solid #9b59b6;
+		background-color: white;
+		color: #9b59b6;
+		border-radius: 0.25rem;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 0.8rem;
+	}
+
+	.calendar-btn:hover {
+		background-color: #9b59b6;
+		color: white;
+	}
+
+	.edit-modal {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-color: rgba(0, 0, 0, 0.5);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		z-index: 1000;
+	}
+
+	.edit-modal-content {
+		background-color: white;
+		padding: 1.5rem;
+		border-radius: 0.5rem;
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+		max-width: 400px;
+		width: 90%;
+	}
+
+	.edit-modal-content h4 {
+		margin: 0 0 1rem 0;
+		color: #333;
+	}
+
+	.edit-field {
+		margin-bottom: 1rem;
+	}
+
+	.edit-field label {
+		display: block;
+		margin-bottom: 0.5rem;
+		font-weight: 500;
+		color: #555;
+	}
+
+	.edit-field textarea {
+		width: 100%;
+		padding: 0.5rem;
+		border: 1px solid #ddd;
+		border-radius: 0.25rem;
+		font-family: inherit;
+		resize: vertical;
+	}
+
+	.edit-field input[type="date"] {
+		width: 100%;
+		padding: 0.5rem;
+		border: 1px solid #ddd;
+		border-radius: 0.25rem;
+	}
+
+	.edit-actions {
+		display: flex;
+		gap: 0.5rem;
+		justify-content: flex-end;
+		margin-top: 1rem;
+	}
+
+	.edit-actions button {
+		padding: 0.5rem 1rem;
+		border: 1px solid #ddd;
+		background-color: white;
+		border-radius: 0.25rem;
+		cursor: pointer;
+		font-size: 0.9rem;
+	}
+
+	.edit-actions button:first-child,
+	.edit-actions button:nth-child(2) {
+		background-color: #3498db;
+		color: white;
+		border-color: #3498db;
+	}
+
+	.edit-actions button:first-child:hover,
+	.edit-actions button:nth-child(2):hover {
+		background-color: #2980b9;
+	}
+
+	.edit-actions button:last-child:hover {
+		background-color: #f8f9fa;
 	}
 </style>
