@@ -40,7 +40,7 @@
 	let settings = {
 		timerSettings: settingsAgent.getSetting('timerSettings') as TimerSettings,
 		soundSettings: settingsAgent.getSetting('soundSettings') as SoundSettings,
-		themeSettings: settingsAgent.getSetting('themeSettings') as any,
+		themeSettings: settingsAgent.getSetting('themeSettings'),
 		goalsSettings: settingsAgent.getSetting('goalsSettings') as GoalsSettings,
 		breakActivitiesSettings: settingsAgent.getSetting(
 			'breakActivitiesSettings'
@@ -48,7 +48,7 @@
 		integrationSettings: settingsAgent.getSetting('integrationSettings') as IntegrationSettings
 	};
 	const unsub = settingsAgent.subscribe((s) => (settings = s as typeof settings));
-	onDestroy(() => unsub());
+	onDestroy(() => unsub?.());
 
 	function update(key: string, value: unknown) {
 		settingsAgent.updateSetting(key, value);

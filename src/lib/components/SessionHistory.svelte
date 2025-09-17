@@ -1,6 +1,12 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
 	import { sessionHistoryAgent } from '$lib/stores/session-history-agent';
+	import {
+		isInRange,
+		formatDateTimeDisplay,
+		formatDurationDisplay,
+		type TimeRange
+	} from '$lib/utils/date';
 
 	type SessionRecord = {
 		id: string;
@@ -17,44 +23,22 @@
 	let sessionState: SessionHistoryState = { sessions: [] };
 	let showHistory = false;
 	let filterMode: 'all' | 'Pomodoro' | 'ShortBreak' | 'LongBreak' = 'all';
-	let dateRange: 'today' | 'week' | 'month' | 'all' = 'all';
+	let dateRange: TimeRange = 'all';
 
 	const unsubscribe = sessionHistoryAgent.subscribe((state) => (sessionState = state));
 
-	onDestroy(() => unsubscribe());
+	onDestroy(() => unsubscribe?.());
 
 	$: sessions = sessionState.sessions;
 	$: filteredSessions = sessions.filter((session) => {
 		if (filterMode !== 'all' && session.mode !== filterMode) return false;
-
-		const now = new Date();
-		const sessionDate = session.startTime;
-
-		switch (dateRange) {
-			case 'today':
-				return sessionDate.toDateString() === now.toDateString();
-			case 'week':
-				const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-				return sessionDate >= weekAgo;
-			case 'month':
-				const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-				return sessionDate >= monthAgo;
-			default:
-				return true;
-		}
+		return isInRange(session.startTime, dateRange);
 	});
 
-	$: stats = sessionHistoryAgent.getSessionStats();
+	let stats = $derived(sessionHistoryAgent.getSessionStats());
 
-	function formatDuration(seconds: number): string {
-		const minutes = Math.floor(seconds / 60);
-		const remainingSeconds = seconds % 60;
-		return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-	}
-
-	function formatDateTime(date: Date): string {
-		return date.toLocaleString();
-	}
+	const formatDuration = (seconds: number) => formatDurationDisplay(seconds);
+	const formatDateTime = (date: Date) => formatDateTimeDisplay(date);
 
 	function getModeColor(mode: string): string {
 		switch (mode) {

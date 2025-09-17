@@ -63,7 +63,7 @@ function createTimerAgent() {
 		pomodorosCompletedInCycle: storedState.pomodorosCompletedInCycle || 0
 	};
 
-	const { subscribe, update, set } = writable<TimerState>(initialState);
+	const { subscribe, update } = writable<TimerState>(initialState);
 
 	let intervalId: number | null = null;
 	let wasRunningBeforeHidden = false;

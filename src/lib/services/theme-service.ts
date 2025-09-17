@@ -101,7 +101,7 @@ export class ThemeService {
 			useGradient
 		};
 
-		const themeSettings = settingsAgent.getSetting('themeSettings') as any;
+		const themeSettings = settingsAgent.getSetting('themeSettings') as ThemeSettings;
 		const customThemes = [...(themeSettings?.customThemes || []), newTheme];
 
 		settingsAgent.updateSetting('themeSettings.customThemes', customThemes);

@@ -100,7 +100,7 @@
 		<label>
 			<span>Current Theme</span>
 			<select bind:value={currentThemeId} on:change={() => applyTheme(currentThemeId)}>
-				{#each themes as theme}
+				{#each themes as theme (theme.id)}
 					<option value={theme.id}>{theme.name}</option>
 				{/each}
 			</select>
@@ -110,7 +110,7 @@
 	</div>
 
 	<div class="theme-grid">
-		{#each themes as theme}
+		{#each themes as theme (theme.id)}
 			<div class="theme-card" class:active={theme.id === currentThemeId}>
 				<div class="theme-preview" style={getThemePreviewStyle(theme)}></div>
 				<div class="theme-info">

@@ -2,13 +2,35 @@
 	import { onDestroy } from 'svelte';
 	import { sessionHistoryAgent } from '$lib/stores/session-history-agent';
 	import { goalsAgent } from '$lib/stores/goals-agent';
-	import { settingsAgent } from '$lib/stores/settings-agent';
+	import { getLastNDays, getRangeForTimeRange } from '$lib/utils/date';
 
 	type TimeRange = 'today' | 'week' | 'month' | 'all';
 
 	let timeRange: TimeRange = 'week';
-	let stats: any = {};
-	let chartData: any = {};
+	let stats: {
+		totalSessions?: number;
+		pomodoroSessions?: number;
+		breakSessions?: number;
+		totalFocusTime?: number;
+		averageSessionLength?: number;
+		completionRate?: number;
+		avgDailySessions?: number;
+		avgDailyFocusTime?: number;
+		todayProgress?: unknown;
+		weekProgress?: unknown;
+		currentStreak?: number;
+		totalBreakTime?: number;
+	} = {};
+	let chartData: {
+		labels?: string[];
+		datasets?: {
+			label: string;
+			data: number[];
+			backgroundColor: string;
+			borderColor: string;
+			borderWidth: number;
+		}[];
+	} = {};
 
 	const unsub = sessionHistoryAgent.subscribe(() => {
 		updateStats();
@@ -17,24 +39,7 @@
 	onDestroy(() => unsub());
 
 	function updateStats() {
-		const now = new Date();
-		let startDate: Date | undefined;
-		let endDate: Date = now;
-
-		switch (timeRange) {
-			case 'today':
-				startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-				break;
-			case 'week':
-				startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-				break;
-			case 'month':
-				startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-				break;
-			case 'all':
-				startDate = undefined;
-				break;
-		}
+		const { start: startDate, end: endDate } = getRangeForTimeRange(timeRange);
 
 		const sessionStats = sessionHistoryAgent.getSessionStats(startDate, endDate);
 		const totalFocusTime = sessionHistoryAgent.getTotalFocusTime(startDate, endDate);
@@ -45,17 +50,14 @@
 		const breakSessions = sessions.filter((s) => s.mode !== 'Pomodoro');
 
 		// Calculate streaks and goals
-		const today = new Date();
-		const todayStr = today.toISOString().split('T')[0];
-		const weekStart = new Date(today.getTime() - today.getDay() * 24 * 60 * 60 * 1000);
-		const weekStartStr = weekStart.toISOString().split('T')[0];
+		// get streaks and goals from agent
 
 		const todayProgress = goalsAgent.getTodayProgress();
 		const weekProgress = goalsAgent.getThisWeekProgress();
 		const currentStreak = goalsAgent.getStreak();
 
 		// Calculate completion rate (sessions that reached full duration)
-		const completedSessions = pomodoroSessions.filter((s) => s.duration >= 25 * 60); // Assuming 25 min pomodoro
+		const completedSessions = pomodoroSessions.filter((s) => s.duration >= 25 * 60); // heuristic
 		const completionRate =
 			pomodoroSessions.length > 0 ? (completedSessions.length / pomodoroSessions.length) * 100 : 0;
 
@@ -84,23 +86,16 @@
 	}
 
 	function generateChartData() {
-		const last7Days = [];
-		for (let i = 6; i >= 0; i--) {
-			const date = new Date();
-			date.setDate(date.getDate() - i);
-			last7Days.push(date);
-		}
-
+		const last7Days = getLastNDays(7);
 		chartData = {
 			labels: last7Days.map((date) => date.toLocaleDateString('en-US', { weekday: 'short' })),
 			datasets: [
 				{
 					label: 'Focus Time (minutes)',
 					data: last7Days.map((date) => {
-						const nextDay = new Date(date);
-						nextDay.setDate(date.getDate() + 1);
+						const nextDay = new Date(date.getTime() + 24 * 60 * 60 * 1000);
 						const focusTime = sessionHistoryAgent.getTotalFocusTime(date, nextDay);
-						return Math.round(focusTime / 60); // Convert to minutes
+						return Math.round(focusTime / 60);
 					}),
 					backgroundColor: 'rgba(52, 152, 219, 0.6)',
 					borderColor: 'rgba(52, 152, 219, 1)',
@@ -124,7 +119,10 @@
 		return `${Math.round(value)}%`;
 	}
 
-	$: updateStats(); // Re-run when timeRange changes
+	$effect(() => {
+		// depend on timeRange implicitly through the function
+		updateStats();
+	});
 </script>
 
 <div class="statistics-dashboard">
@@ -245,7 +243,7 @@
 		<div class="chart-container">
 			<!-- Simple bar chart representation -->
 			<div class="simple-chart">
-				{#each chartData.datasets?.[0]?.data || [] as value, i}
+				{#each chartData.datasets?.[0]?.data || [] as value, i (i)}
 					<div class="chart-bar" style="height: {Math.max((value / 120) * 100, 5)}%">
 						<div class="bar-value">{value}m</div>
 						<div class="bar-label">{chartData.labels?.[i]}</div>

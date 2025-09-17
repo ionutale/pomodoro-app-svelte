@@ -2,41 +2,19 @@
 	import { onDestroy } from 'svelte';
 	import { goalsAgent } from '$lib/stores/goals-agent';
 	import { settingsAgent } from '$lib/stores/settings-agent';
+	import { formatDateDisplay, formatWeekRangeDisplay } from '$lib/utils/date';
 
-	type DailyProgress = {
-		date: string;
-		pomodorosCompleted: number;
-		goal: number;
-	};
+	const unsubscribe = goalsAgent.subscribe(() => {
+		// trigger recompute via store subscription, no local state needed
+		/* noop */
+	});
 
-	type WeeklyProgress = {
-		weekStart: string;
-		pomodorosCompleted: number;
-		goal: number;
-	};
+	onDestroy(() => unsubscribe?.());
 
-	type GoalsState = {
-		dailyProgress: DailyProgress[];
-		weeklyProgress: WeeklyProgress[];
-		currentDay: string;
-		currentWeek: string;
-	};
-
-	let goalsState: GoalsState = {
-		dailyProgress: [],
-		weeklyProgress: [],
-		currentDay: '',
-		currentWeek: ''
-	};
-
-	const unsubscribe = goalsAgent.subscribe((state) => (goalsState = state));
-
-	onDestroy(() => unsubscribe());
-
-	$: todayProgress = goalsAgent.getTodayProgress();
-	$: weekProgress = goalsAgent.getThisWeekProgress();
-	$: currentStreak = goalsAgent.getStreak();
-	$: goalsEnabled = settingsAgent.getSetting('goalsSettings.enableGoals') ?? true;
+	let todayProgress = $derived(goalsAgent.getTodayProgress());
+	let weekProgress = $derived(goalsAgent.getThisWeekProgress());
+	let currentStreak = $derived(goalsAgent.getStreak());
+	let goalsEnabled = $derived(settingsAgent.getSetting('goalsSettings.enableGoals') ?? true);
 
 	function getProgressPercentage(completed: number, goal: number): number {
 		return Math.min((completed / goal) * 100, 100);
@@ -49,17 +27,8 @@
 		return '#e74c3c'; // Red
 	}
 
-	function formatDate(dateString: string): string {
-		const date = new Date(dateString);
-		return date.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
-	}
-
-	function formatWeek(weekStart: string): string {
-		const start = new Date(weekStart);
-		const end = new Date(start);
-		end.setDate(start.getDate() + 6);
-		return `${start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${end.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
-	}
+	const formatDate = (dateString: string) => formatDateDisplay(dateString);
+	const formatWeek = (weekStart: string) => formatWeekRangeDisplay(weekStart);
 </script>
 
 {#if goalsEnabled}

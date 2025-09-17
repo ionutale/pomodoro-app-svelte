@@ -3,8 +3,9 @@
 	import { breakActivitiesAgent } from '$lib/stores/break-activities-agent';
 	import { timerAgent, type TimerMode } from '$lib/stores/timer-agent';
 	import { settingsAgent } from '$lib/stores/settings-agent';
+	import type { BreakActivity as BreakActivityType } from '$lib/stores/break-activities-agent';
 
-	let currentActivity: any = null;
+	let currentActivity: BreakActivityType | null = null;
 	let currentMode: TimerMode = 'Pomodoro';
 	let isEnabled = true;
 
@@ -22,12 +23,14 @@
 	});
 
 	onDestroy(() => {
-		unsubActivity();
-		unsubTimer();
-		unsubSettings();
+		unsubActivity?.();
+		unsubTimer?.();
+		unsubSettings?.();
 	});
 
-	function getCategoryColor(category: string): string {
+	function getCategoryColor(
+		category: 'physical' | 'mental' | 'creative' | 'social' | 'relaxation'
+	): string {
 		switch (category) {
 			case 'physical':
 				return '#e74c3c';
@@ -44,7 +47,9 @@
 		}
 	}
 
-	function getCategoryIcon(category: string): string {
+	function getCategoryIcon(
+		category: 'physical' | 'mental' | 'creative' | 'social' | 'relaxation'
+	): string {
 		switch (category) {
 			case 'physical':
 				return '🏃';

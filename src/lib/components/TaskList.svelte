@@ -109,11 +109,6 @@
 		editingDueDate = '';
 	}
 
-	function cancelDueDateEditing() {
-		editingTaskId = null;
-		editingDueDate = '';
-	}
-
 	function handleKeydown(event: KeyboardEvent) {
 		// Handle Ctrl+I and Ctrl+D for active task
 		if (event.ctrlKey && activeTaskId) {
