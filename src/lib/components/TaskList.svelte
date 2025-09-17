@@ -151,12 +151,16 @@
 		background-color: #3498db;
 		color: white;
 		border: none;
-		border-radius: 0.25rem;
+		border-radius: 0.5rem;
 		cursor: pointer;
+		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+		transition:
+			transform 0.12s ease,
+			background-color 0.2s ease;
 	}
-
 	.add-task button:hover:not(:disabled) {
 		background-color: #2980b9;
+		transform: translateY(-1px);
 	}
 
 	.add-task button:disabled {

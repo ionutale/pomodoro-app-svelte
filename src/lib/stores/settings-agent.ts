@@ -19,12 +19,19 @@ export interface SoundSettings {
 	alarmRepeat: number;
 	tickingSound: TickingSound;
 	tickingVolume: number; // 0-100
+	muted?: boolean;
 }
 
 export interface ThemeSettings {
 	colorTheme: string;
 	hourFormat: HourFormat;
 	darkModeWhenRunning: boolean;
+	useGradient: boolean;
+	colors: {
+		pomodoro: string;
+		shortBreak: string;
+		longBreak: string;
+	};
 }
 
 export interface NotificationSettings {
@@ -63,12 +70,19 @@ const defaultSettings: SettingsState = {
 		alarmVolume: 50,
 		alarmRepeat: 1,
 		tickingSound: 'None',
-		tickingVolume: 50
+		tickingVolume: 50,
+		muted: false
 	},
 	themeSettings: {
 		colorTheme: 'default',
 		hourFormat: '24h',
-		darkModeWhenRunning: false
+		darkModeWhenRunning: false,
+		useGradient: true,
+		colors: {
+			pomodoro: '#f67280',
+			shortBreak: '#82ccdd',
+			longBreak: '#78e08f'
+		}
 	},
 	notificationSettings: {
 		reminder: false,
@@ -85,7 +99,12 @@ const defaultSettings: SettingsState = {
 };
 
 function createSettingsAgent() {
-	const { subscribe, update } = writable<SettingsState>(defaultSettings);
+	const store = writable<SettingsState>(defaultSettings);
+	const { subscribe, update } = store;
+	let currentState: SettingsState = defaultSettings;
+	subscribe((s) => {
+		currentState = s;
+	});
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	function updateSetting(key: string, value: any): void {
@@ -108,7 +127,7 @@ function createSettingsAgent() {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	function getSetting(key: string): any {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		let current: any = defaultSettings;
+		let current: any = currentState;
 		const keys = key.split('.');
 		for (const k of keys) {
 			current = current[k];

@@ -1,38 +1,46 @@
 <script lang="ts">
-  import { onDestroy } from 'svelte';
-  import { timerAgent, type TimerMode } from '$lib/stores/timer-agent';
+	import { onDestroy } from 'svelte';
+	import { timerAgent, type TimerMode } from '$lib/stores/timer-agent';
 
-  type TimerState = { currentMode: TimerMode; timerStatus: 'running' | 'paused' | 'stopped'; timeRemaining: number };
-  let timerState: TimerState = { currentMode: 'Pomodoro', timerStatus: 'stopped', timeRemaining: 0 };
+	type TimerState = {
+		currentMode: TimerMode;
+		timerStatus: 'running' | 'paused' | 'stopped';
+		timeRemaining: number;
+	};
+	let timerState: TimerState = {
+		currentMode: 'Pomodoro',
+		timerStatus: 'stopped',
+		timeRemaining: 0
+	};
 
-  const unsubscribe = timerAgent.subscribe((state) => (timerState = state as TimerState));
-  onDestroy(() => unsubscribe());
+	const unsubscribe = timerAgent.subscribe((state) => (timerState = state as TimerState));
+	onDestroy(() => unsubscribe());
 
-  $: timeDisplay = formatTime(timerState.timeRemaining);
-  $: currentMode = timerState.currentMode;
-  $: timerStatus = timerState.timerStatus;
+	$: timeDisplay = formatTime(timerState.timeRemaining);
+	$: currentMode = timerState.currentMode;
+	$: timerStatus = timerState.timerStatus;
 
-  function formatTime(seconds: number): string {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  }
+	function formatTime(seconds: number): string {
+		const mins = Math.floor(seconds / 60);
+		const secs = seconds % 60;
+		return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+	}
 
-  function handleStartPause() {
-    if (timerStatus === 'running') {
-      timerAgent.pauseTimer();
-    } else {
-      timerAgent.startTimer();
-    }
-  }
+	function handleStartPause() {
+		if (timerStatus === 'running') {
+			timerAgent.pauseTimer();
+		} else {
+			timerAgent.startTimer();
+		}
+	}
 
-  function handleReset() {
-    timerAgent.resetTimer();
-  }
+	function handleReset() {
+		timerAgent.resetTimer();
+	}
 
-  function handleSwitchMode(mode: TimerMode) {
-    timerAgent.switchMode(mode);
-  }
+	function handleSwitchMode(mode: TimerMode) {
+		timerAgent.switchMode(mode);
+	}
 </script>
 
 <div class="timer-container">
@@ -127,15 +135,30 @@
 		font-size: 1rem;
 		font-weight: 600;
 		cursor: pointer;
-		transition: transform 0.12s ease, box-shadow 0.2s ease, background-color 0.2s ease;
-		box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+		transition:
+			transform 0.12s ease,
+			box-shadow 0.2s ease,
+			background-color 0.2s ease;
+		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 	}
 
-	.start-pause { background-color: #27ae60; color: white; }
-	.start-pause:hover:not(:disabled) { background-color: #229954; transform: translateY(-1px); }
+	.start-pause {
+		background-color: #27ae60;
+		color: white;
+	}
+	.start-pause:hover:not(:disabled) {
+		background-color: #229954;
+		transform: translateY(-1px);
+	}
 
-	.reset { background-color: #95a5a6; color: white; }
-	.reset:hover { background-color: #7f8c8d; transform: translateY(-1px); }
+	.reset {
+		background-color: #95a5a6;
+		color: white;
+	}
+	.reset:hover {
+		background-color: #7f8c8d;
+		transform: translateY(-1px);
+	}
 
 	.control-btn:disabled {
 		opacity: 0.5;

@@ -1,7 +1,7 @@
 import { writable } from 'svelte/store';
 import { settingsAgent } from './settings-agent';
 import { taskAgent } from './task-agent';
-import { playAlarm } from '$lib/audio/sounds';
+import { playAlarmFile } from '$lib/audio/sounds';
 
 export type TimerMode = 'Pomodoro' | 'ShortBreak' | 'LongBreak';
 export type TimerStatus = 'running' | 'paused' | 'stopped';
@@ -77,8 +77,24 @@ function createTimerAgent() {
 					intervalId = null;
 
 					// Handle end-of-session: alarm and mode transitions
-					const s = settingsAgent.getSetting('soundSettings') as { alarmRepeat?: number; alarmVolume?: number };
-					playAlarm(s?.alarmRepeat ?? 1, (s?.alarmVolume ?? 50) / 100).catch(() => {});
+					const s = settingsAgent.getSetting('soundSettings') as {
+						alarmRepeat?: number;
+						alarmVolume?: number;
+						alarmSound?: string;
+						muted?: boolean;
+					};
+					if (!s?.muted) {
+						const sound = (s?.alarmSound || 'Bell').toLowerCase();
+						const map: Record<string, string[]> = {
+							bell: ['/sounds/bell.mp3'],
+							kitchen: ['/sounds/kitchen.mp3'],
+							bird: ['/sounds/bird.mp3'],
+							digital: ['/sounds/digital.mp3'],
+							wood: ['/sounds/wood.mp3']
+						};
+						const urls = map[sound] || map['bell'];
+						playAlarmFile(urls, s?.alarmRepeat ?? 1, (s?.alarmVolume ?? 50) / 100).catch(() => {});
+					}
 
 					// Handle mode transitions
 					let nextMode: TimerMode;
