@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { onDestroy, onMount } from 'svelte';
 	import { taskAgent } from '$lib/stores/task-agent';
 
 	type Task = {
@@ -28,8 +27,10 @@
 	let editingNote = '';
 	let editingDueDate = '';
 
-	const unsubscribe = taskAgent.subscribe((state) => (taskState = state));
-	onDestroy(() => unsubscribe());
+	$effect(() => {
+		const unsubscribe = taskAgent.subscribe((state) => (taskState = state));
+		return () => unsubscribe();
+	});
 
 	$: tasks = taskState.taskList;
 	$: activeTaskId = taskState.activeTaskId;
@@ -123,7 +124,7 @@
 	}
 
 	// Add keyboard event listener
-	onMount(() => {
+	$effect(() => {
 		document.addEventListener('keydown', handleKeydown);
 		return () => document.removeEventListener('keydown', handleKeydown);
 	});

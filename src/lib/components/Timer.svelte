@@ -162,6 +162,7 @@
 		width: clamp(220px, 40vw, 320px);
 		height: clamp(220px, 40vw, 320px);
 		border-radius: 999px;
+		position: relative;
 		background: radial-gradient(
 			100% 100% at 50% 0%,
 			rgba(255, 255, 255, 0.45),
@@ -176,6 +177,7 @@
 	.ring {
 		position: absolute;
 		inset: 0;
+		pointer-events: none;
 	}
 	.ring-bg {
 		fill: none;
