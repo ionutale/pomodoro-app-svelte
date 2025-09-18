@@ -41,12 +41,23 @@ You can preview the production build with `npm run preview`.
 
 CI captures three screenshots on every push/PR and uploads them as an artifact. They’re also saved in `docs/screenshots` when generated locally.
 
-- Timer view
-	- `docs/screenshots/timer.png`
-- Tasks view
-	- `docs/screenshots/tasks.png`
-- Stats view
-	- `docs/screenshots/stats.png`
+<p align="center">
+	<img src="./docs/screenshots/timer.png" alt="Timer view screenshot" width="720" />
+	<br/>
+	<em>Timer view</em>
+</p>
+
+<p align="center">
+	<img src="./docs/screenshots/tasks.png" alt="Tasks view screenshot" width="720" />
+	<br/>
+	<em>Tasks view</em>
+</p>
+
+<p align="center">
+	<img src="./docs/screenshots/stats.png" alt="Stats view screenshot" width="720" />
+	<br/>
+	<em>Stats view</em>
+</p>
 
 To generate locally:
 
