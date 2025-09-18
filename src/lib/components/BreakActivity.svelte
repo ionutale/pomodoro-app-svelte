@@ -84,7 +84,7 @@
 				<h3>Break Activity</h3>
 				<span class="activity-category">{currentActivity.category}</span>
 			</div>
-			<button class="refresh-button" on:click={generateNewActivity} title="Get another activity">
+			<button class="refresh-button" onclick={generateNewActivity} title="Get another activity">
 				🔄
 			</button>
 		</div>
@@ -155,10 +155,17 @@
 		border: none;
 		font-size: 1.2rem;
 		cursor: pointer;
+		min-width: 44px;
+		min-height: 44px;
 		padding: 0.5rem;
 		border-radius: 50%;
 		transition: background-color 0.2s;
 		flex-shrink: 0;
+	}
+
+	.refresh-button:focus-visible {
+		outline: 3px solid #2563eb;
+		outline-offset: 2px;
 	}
 
 	.refresh-button:hover {

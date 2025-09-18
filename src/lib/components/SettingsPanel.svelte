@@ -65,7 +65,7 @@
 				min="1"
 				max="120"
 				bind:value={settings.timerSettings.pomodoro}
-				on:change={(e) => update('timerSettings.pomodoro', Number(e.currentTarget.value))}
+				onchange={(e) => update('timerSettings.pomodoro', Number(e.currentTarget.value))}
 			/>
 		</label>
 		<label>
@@ -75,7 +75,7 @@
 				min="1"
 				max="60"
 				bind:value={settings.timerSettings.shortBreak}
-				on:change={(e) => update('timerSettings.shortBreak', Number(e.currentTarget.value))}
+				onchange={(e) => update('timerSettings.shortBreak', Number(e.currentTarget.value))}
 			/>
 		</label>
 		<label>
@@ -85,7 +85,7 @@
 				min="1"
 				max="60"
 				bind:value={settings.timerSettings.longBreak}
-				on:change={(e) => update('timerSettings.longBreak', Number(e.currentTarget.value))}
+				onchange={(e) => update('timerSettings.longBreak', Number(e.currentTarget.value))}
 			/>
 		</label>
 		<label>
@@ -95,14 +95,14 @@
 				min="2"
 				max="12"
 				bind:value={settings.timerSettings.longBreakInterval}
-				on:change={(e) => update('timerSettings.longBreakInterval', Number(e.currentTarget.value))}
+				onchange={(e) => update('timerSettings.longBreakInterval', Number(e.currentTarget.value))}
 			/>
 		</label>
 		<label class="toggle">
 			<input
 				type="checkbox"
 				bind:checked={settings.timerSettings.autoStartPomodoros}
-				on:change={(e) => update('timerSettings.autoStartPomodoros', e.currentTarget.checked)}
+				onchange={(e) => update('timerSettings.autoStartPomodoros', e.currentTarget.checked)}
 			/>
 			<span>Auto-start Pomodoros</span>
 		</label>
@@ -110,7 +110,7 @@
 			<input
 				type="checkbox"
 				bind:checked={settings.timerSettings.autoStartBreaks}
-				on:change={(e) => update('timerSettings.autoStartBreaks', e.currentTarget.checked)}
+				onchange={(e) => update('timerSettings.autoStartBreaks', e.currentTarget.checked)}
 			/>
 			<span>Auto-start Breaks</span>
 		</label>
@@ -122,7 +122,7 @@
 				max="100"
 				step="1"
 				bind:value={settings.soundSettings.alarmVolume}
-				on:input={(e) => update('soundSettings.alarmVolume', Number(e.currentTarget.value))}
+				oninput={(e) => update('soundSettings.alarmVolume', Number(e.currentTarget.value))}
 			/>
 		</label>
 		<label>
@@ -132,14 +132,14 @@
 				min="1"
 				max="5"
 				bind:value={settings.soundSettings.alarmRepeat}
-				on:change={(e) => update('soundSettings.alarmRepeat', Number(e.currentTarget.value))}
+				onchange={(e) => update('soundSettings.alarmRepeat', Number(e.currentTarget.value))}
 			/>
 		</label>
 		<label class="toggle">
 			<input
 				type="checkbox"
 				bind:checked={settings.soundSettings.muted}
-				on:change={(e) => update('soundSettings.muted', e.currentTarget.checked)}
+				onchange={(e) => update('soundSettings.muted', e.currentTarget.checked)}
 			/>
 			<span>Mute Alarm</span>
 		</label>
@@ -154,7 +154,7 @@
 			<input
 				type="checkbox"
 				bind:checked={settings.goalsSettings.enableGoals}
-				on:change={(e) => update('goalsSettings.enableGoals', e.currentTarget.checked)}
+				onchange={(e) => update('goalsSettings.enableGoals', e.currentTarget.checked)}
 			/>
 			<span>Enable Goals</span>
 		</label>
@@ -165,7 +165,7 @@
 				min="1"
 				max="50"
 				bind:value={settings.goalsSettings.dailyPomodoros}
-				on:change={(e) => update('goalsSettings.dailyPomodoros', Number(e.currentTarget.value))}
+				onchange={(e) => update('goalsSettings.dailyPomodoros', Number(e.currentTarget.value))}
 			/>
 		</label>
 		<label>
@@ -175,7 +175,7 @@
 				min="1"
 				max="100"
 				bind:value={settings.goalsSettings.weeklyPomodoros}
-				on:change={(e) => update('goalsSettings.weeklyPomodoros', Number(e.currentTarget.value))}
+				onchange={(e) => update('goalsSettings.weeklyPomodoros', Number(e.currentTarget.value))}
 			/>
 		</label>
 
@@ -184,7 +184,7 @@
 			<input
 				type="checkbox"
 				bind:checked={settings.breakActivitiesSettings.enabled}
-				on:change={(e) => update('breakActivitiesSettings.enabled', e.currentTarget.checked)}
+				onchange={(e) => update('breakActivitiesSettings.enabled', e.currentTarget.checked)}
 			/>
 			<span>Enable Break Activities</span>
 		</label>
@@ -192,7 +192,7 @@
 			<input
 				type="checkbox"
 				bind:checked={settings.breakActivitiesSettings.showDuration}
-				on:change={(e) => update('breakActivitiesSettings.showDuration', e.currentTarget.checked)}
+				onchange={(e) => update('breakActivitiesSettings.showDuration', e.currentTarget.checked)}
 			/>
 			<span>Show Activity Duration</span>
 		</label>
@@ -202,7 +202,7 @@
 			<input
 				type="checkbox"
 				bind:checked={settings.integrationSettings.webhookEnabled}
-				on:change={(e) => update('integrationSettings.webhookEnabled', e.currentTarget.checked)}
+				onchange={(e) => update('integrationSettings.webhookEnabled', e.currentTarget.checked)}
 			/>
 			<span>Enable Webhooks</span>
 		</label>
@@ -212,7 +212,7 @@
 				type="url"
 				placeholder="https://example.com/webhook"
 				bind:value={settings.integrationSettings.webhookUrl}
-				on:change={(e) => update('integrationSettings.webhookUrl', e.currentTarget.value)}
+				onchange={(e) => update('integrationSettings.webhookUrl', e.currentTarget.value)}
 			/>
 		</label>
 		<div class="webhook-events" style="grid-column: 1 / -1;">
@@ -223,7 +223,7 @@
 				<input
 					type="checkbox"
 					checked={settings.integrationSettings.webhookEvents?.includes('sessionStart')}
-					on:change={(e) => {
+					onchange={(e) => {
 						const events = [...(settings.integrationSettings.webhookEvents || [])];
 						if (e.currentTarget.checked) {
 							if (!events.includes('sessionStart')) events.push('sessionStart');
@@ -240,7 +240,7 @@
 				<input
 					type="checkbox"
 					checked={settings.integrationSettings.webhookEvents?.includes('sessionEnd')}
-					on:change={(e) => {
+					onchange={(e) => {
 						const events = [...(settings.integrationSettings.webhookEvents || [])];
 						if (e.currentTarget.checked) {
 							if (!events.includes('sessionEnd')) events.push('sessionEnd');
@@ -257,7 +257,7 @@
 				<input
 					type="checkbox"
 					checked={settings.integrationSettings.webhookEvents?.includes('breakStart')}
-					on:change={(e) => {
+					onchange={(e) => {
 						const events = [...(settings.integrationSettings.webhookEvents || [])];
 						if (e.currentTarget.checked) {
 							if (!events.includes('breakStart')) events.push('breakStart');

@@ -152,13 +152,14 @@
 
 	.history-toggle {
 		width: 100%;
+		min-height: 44px;
 		padding: 0.75rem 1rem;
-		background-color: #f8f9fa;
-		border: 1px solid #ddd;
+		background-color: #ffffff;
+		border: 1px solid #cbd5e1;
 		border-radius: 0.5rem;
 		cursor: pointer;
 		font-size: 1rem;
-		font-weight: 500;
+		font-weight: 600;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
@@ -166,15 +167,15 @@
 	}
 
 	.history-toggle:hover {
-		background-color: #e9ecef;
+		background-color: #f8fafc;
 	}
 
 	.history-content {
 		margin-top: 1rem;
 		padding: 1.5rem;
-		border: 1px solid #ddd;
+		border: 1px solid #e2e8f0;
 		border-radius: 0.5rem;
-		background-color: white;
+		background-color: #ffffff;
 	}
 
 	.history-header {
@@ -206,8 +207,9 @@
 	}
 
 	.filters select {
+		min-height: 44px;
 		padding: 0.25rem 0.5rem;
-		border: 1px solid #ddd;
+		border: 1px solid #cbd5e1;
 		border-radius: 0.25rem;
 		font-size: 0.9rem;
 	}
@@ -244,7 +246,7 @@
 	.sessions-list {
 		max-height: 400px;
 		overflow-y: auto;
-		border: 1px solid #eee;
+		border: 1px solid #e2e8f0;
 		border-radius: 0.5rem;
 	}
 
@@ -252,8 +254,8 @@
 		display: flex;
 		padding: 1rem;
 		border-left: 4px solid;
-		border-bottom: 1px solid #f0f0f0;
-		background-color: white;
+		border-bottom: 1px solid #e2e8f0;
+		background-color: #ffffff;
 		transition: background-color 0.2s ease;
 	}
 
@@ -307,17 +309,27 @@
 	}
 
 	.history-actions button {
+		min-height: 44px;
 		padding: 0.5rem 1rem;
-		border: 1px solid #e74c3c;
-		background-color: white;
-		color: #e74c3c;
-		border-radius: 0.25rem;
+		border: 1px solid #b91c1c;
+		background-color: #ffffff;
+		color: #b91c1c;
+		border-radius: 0.375rem;
 		cursor: pointer;
-		font-size: 0.9rem;
+		font-size: 0.95rem;
+		font-weight: 600;
 	}
 
 	.history-actions button:hover {
-		background-color: #e74c3c;
-		color: white;
+		background-color: #dc2626;
+		color: #ffffff;
+		border-color: #dc2626;
+	}
+
+	.history-toggle:focus-visible,
+	.filters select:focus-visible,
+	.history-actions button:focus-visible {
+		outline: 3px solid #2563eb;
+		outline-offset: 2px;
 	}
 </style>

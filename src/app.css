@@ -16,13 +16,13 @@
 	margin-bottom: 0.5rem;
 }
 .section-header h1 {
-	color: #102a43;
+	color: #0b1220;
 	font-size: clamp(1.8rem, 3.5vw, 2.4rem);
 	margin: 0;
 }
 .subtitle {
-	color: #2f4858;
-	opacity: 0.85;
+	color: #1f2937;
+	opacity: 0.9;
 	margin: 0.25rem 0 0;
 }
 
@@ -47,5 +47,11 @@
 	border-color: rgba(255, 255, 255, 0.08);
 }
 .dark-run .section-header h1 {
-	color: #f1f5f9;
+	color: #f8fafc;
+}
+
+/* Generic focus-visible outline */
+:focus-visible {
+	outline: 3px solid #2563eb;
+	outline-offset: 2px;
 }

@@ -95,33 +95,33 @@
 	<div class="timer-controls">
 		<button
 			class="control-btn start-pause"
-			on:click={handleStartPause}
+			onclick={handleStartPause}
 			disabled={timerStatus === 'stopped' && timerState?.timeRemaining === 0}
 		>
 			{timerStatus === 'running' ? 'Pause' : 'Start'}
 		</button>
-		<button class="control-btn reset" on:click={handleReset}> Reset </button>
+		<button class="control-btn reset" onclick={handleReset}> Reset </button>
 	</div>
 
 	<div class="mode-buttons">
 		<button
 			class="mode-btn"
 			class:active={currentMode === 'Pomodoro'}
-			on:click={() => handleSwitchMode('Pomodoro')}
+			onclick={() => handleSwitchMode('Pomodoro')}
 		>
 			Pomodoro
 		</button>
 		<button
 			class="mode-btn"
 			class:active={currentMode === 'ShortBreak'}
-			on:click={() => handleSwitchMode('ShortBreak')}
+			onclick={() => handleSwitchMode('ShortBreak')}
 		>
 			Short Break
 		</button>
 		<button
 			class="mode-btn"
 			class:active={currentMode === 'LongBreak'}
-			on:click={() => handleSwitchMode('LongBreak')}
+			onclick={() => handleSwitchMode('LongBreak')}
 		>
 			Long Break
 		</button>
@@ -214,6 +214,8 @@
 	}
 
 	.control-btn {
+		min-width: 44px;
+		min-height: 44px;
 		padding: 0.65rem 1.15rem;
 		border: none;
 		border-radius: 0.75rem;
@@ -228,8 +230,8 @@
 	}
 
 	.start-pause {
-		background-color: #111827;
-		color: white;
+		background-color: #111827; /* Contrast 21:1 on white */
+		color: #ffffff;
 	}
 	.start-pause:hover:not(:disabled) {
 		background-color: #0b1220;
@@ -237,9 +239,9 @@
 	}
 
 	.reset {
-		background-color: rgba(255, 255, 255, 0.7);
+		background-color: #ffffff;
 		color: #0f172a;
-		border: 1px solid rgba(16, 24, 40, 0.08);
+		border: 1px solid rgba(16, 24, 40, 0.25);
 	}
 	.reset:hover {
 		background-color: rgba(255, 255, 255, 0.85);
@@ -257,15 +259,23 @@
 	}
 
 	.mode-btn {
-		padding: 0.5rem 0.9rem;
+			min-width: 44px;
+			min-height: 44px;
+			padding: 0.5rem 0.9rem;
 		border: 1px solid rgba(16, 24, 40, 0.12);
 		border-radius: 999px;
-		background-color: rgba(255, 255, 255, 0.7);
-		color: #0f172a;
+			background-color: #ffffff;
+			color: #0f172a;
 		font-size: 0.9rem;
 		cursor: pointer;
 		transition: all 0.2s ease;
 	}
+
+		.control-btn:focus-visible,
+		.mode-btn:focus-visible {
+			outline: 3px solid #2563eb;
+			outline-offset: 2px;
+		}
 
 	.mode-btn:hover {
 		border-color: rgba(16, 24, 40, 0.25);

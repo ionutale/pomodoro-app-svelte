@@ -6,7 +6,7 @@
 
 	type TimeRange = 'today' | 'week' | 'month' | 'all';
 
-	let timeRange: TimeRange = 'week';
+	let timeRange: TimeRange = $state('week');
 	let stats: {
 		totalSessions?: number;
 		pomodoroSessions?: number;
@@ -127,18 +127,18 @@
 
 <div class="statistics-dashboard">
 	<div class="stats-header">
-		<h3>📊 Productivity Statistics</h3>
+		<h2>📊 Productivity Statistics</h2>
 		<div class="time-range-selector">
-			<button class:active={timeRange === 'today'} on:click={() => (timeRange = 'today')}
+			<button class:active={timeRange === 'today'} onclick={() => (timeRange = 'today')}
 				>Today</button
 			>
-			<button class:active={timeRange === 'week'} on:click={() => (timeRange = 'week')}
+			<button class:active={timeRange === 'week'} onclick={() => (timeRange = 'week')}
 				>This Week</button
 			>
-			<button class:active={timeRange === 'month'} on:click={() => (timeRange = 'month')}
+			<button class:active={timeRange === 'month'} onclick={() => (timeRange = 'month')}
 				>This Month</button
 			>
-			<button class:active={timeRange === 'all'} on:click={() => (timeRange = 'all')}
+			<button class:active={timeRange === 'all'} onclick={() => (timeRange = 'all')}
 				>All Time</button
 			>
 		</div>
@@ -270,7 +270,7 @@
 		margin-bottom: 1.5rem;
 	}
 
-	.stats-header h3 {
+	.stats-header h2 {
 		margin: 0;
 		color: #333;
 	}
@@ -281,19 +281,27 @@
 	}
 
 	.time-range-selector button {
+		min-height: 44px;
+		min-width: 44px;
 		padding: 0.5rem 1rem;
-		border: 1px solid #ddd;
-		background: white;
-		border-radius: 0.25rem;
+		border: 1px solid #cbd5e1;
+		background: #ffffff;
+		border-radius: 0.375rem;
 		cursor: pointer;
-		font-size: 0.9rem;
+		font-size: 0.95rem;
+		font-weight: 600;
 		transition: all 0.2s;
 	}
 
 	.time-range-selector button.active {
-		background: #3498db;
-		color: white;
-		border-color: #3498db;
+		background: #2563eb;
+		color: #ffffff;
+		border-color: #2563eb;
+	}
+
+	.time-range-selector button:focus-visible {
+		outline: 3px solid #2563eb;
+		outline-offset: 2px;
 	}
 
 	.stats-grid {

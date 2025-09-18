@@ -99,14 +99,14 @@
 	<div class="theme-selector">
 		<label>
 			<span>Current Theme</span>
-			<select bind:value={currentThemeId} on:change={() => applyTheme(currentThemeId)}>
+			<select bind:value={currentThemeId} onchange={() => applyTheme(currentThemeId)}>
 				{#each themes as theme (theme.id)}
 					<option value={theme.id}>{theme.name}</option>
 				{/each}
 			</select>
 		</label>
 
-		<button class="create-theme-btn" on:click={startCreatingTheme}> + Create Theme </button>
+	<button class="create-theme-btn" onclick={startCreatingTheme}> + Create Theme </button>
 	</div>
 
 	<div class="theme-grid">
@@ -135,10 +135,10 @@
 				</div>
 				<div class="theme-actions">
 					{#if theme.id !== 'default'}
-						<button class="edit-btn" on:click={() => startEditingTheme(theme)} title="Edit theme"
+						<button class="edit-btn" onclick={() => startEditingTheme(theme)} title="Edit theme"
 							>✏️</button
 						>
-						<button class="delete-btn" on:click={() => deleteTheme(theme.id)} title="Delete theme"
+						<button class="delete-btn" onclick={() => deleteTheme(theme.id)} title="Delete theme"
 							>🗑️</button
 						>
 					{/if}
@@ -166,8 +166,8 @@
 					{/if}
 				</div>
 
-				<div class="form-group">
-					<label>Colors</label>
+				<fieldset class="form-group">
+					<legend>Colors</legend>
 					<div class="color-pickers">
 						<div class="color-picker">
 							<label for="pomodoro-color">Pomodoro</label>
@@ -182,7 +182,7 @@
 							<input id="long-break-color" type="color" bind:value={themeColors.longBreak} />
 						</div>
 					</div>
-				</div>
+				</fieldset>
 
 				<div class="form-group">
 					<label class="toggle">
@@ -199,8 +199,8 @@
 				</div>
 
 				<div class="modal-actions">
-					<button class="cancel-btn" on:click={cancelEditing}>Cancel</button>
-					<button class="save-btn" on:click={validateAndSaveTheme} disabled={!themeName.trim()}>
+					<button class="cancel-btn" onclick={cancelEditing}>Cancel</button>
+					<button class="save-btn" onclick={validateAndSaveTheme} disabled={!themeName.trim()}>
 						{editingTheme ? 'Update Theme' : 'Create Theme'}
 					</button>
 				</div>
@@ -316,8 +316,8 @@
 		background: rgba(255, 255, 255, 0.9);
 		border: none;
 		border-radius: 4px;
-		width: 24px;
-		height: 24px;
+		width: 44px;
+		height: 44px;
 		cursor: pointer;
 		font-size: 0.8rem;
 		display: flex;
@@ -451,12 +451,12 @@
 	}
 
 	.cancel-btn {
-		background-color: #95a5a6;
-		color: white;
+		background-color: #111827;
+		color: #ffffff;
 	}
 
 	.cancel-btn:hover {
-		background-color: #7f8c8d;
+		background-color: #0b1220;
 	}
 
 	.save-btn {
@@ -470,7 +470,19 @@
 
 	.save-btn:disabled {
 		background-color: #bdc3c7;
+		color: #111827;
 		cursor: not-allowed;
+	}
+
+	.edit-btn:focus-visible,
+	.delete-btn:focus-visible,
+	.create-theme-btn:focus-visible,
+	.save-btn:focus-visible,
+	.cancel-btn:focus-visible,
+	select:focus-visible,
+	input:focus-visible {
+		outline: 3px solid #2563eb;
+		outline-offset: 2px;
 	}
 
 	@media (max-width: 768px) {

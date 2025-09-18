@@ -124,12 +124,18 @@ function createTimerAgent() {
 		return settings?.longBreakInterval || 4;
 	}
 
-	// Request notification permission on first use
+	// Notification permission is requested lazily on first user gesture
 	let notificationPermissionGranted = false;
-	if (typeof window !== 'undefined' && 'Notification' in window) {
-		Notification.requestPermission().then((permission) => {
-			notificationPermissionGranted = permission === 'granted';
-		});
+	async function ensureNotificationPermission() {
+		if (notificationPermissionGranted) return true;
+		if (typeof window === 'undefined' || !('Notification' in window)) return false;
+		try {
+			const perm = await Notification.requestPermission();
+			notificationPermissionGranted = perm === 'granted';
+			return notificationPermissionGranted;
+		} catch {
+			return false;
+		}
 	}
 
 	function showNotification(title: string, body: string) {
@@ -152,7 +158,9 @@ function createTimerAgent() {
 		}
 	}
 
-	function startTimer() {
+	async function startTimer() {
+		// Request permission when the user starts the timer (gesture)
+		await ensureNotificationPermission();
 		update((state) => {
 			if (state.timerStatus === 'running') return state;
 			const newState = { ...state, timerStatus: 'running' as TimerStatus };
@@ -182,7 +190,7 @@ function createTimerAgent() {
 		});
 
 		if (intervalId) clearInterval(intervalId);
-		intervalId = window.setInterval(() => {
+	intervalId = window.setInterval(() => {
 			update((state) => {
 				if (state.timerStatus !== 'running') return state;
 
