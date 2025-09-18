@@ -77,6 +77,22 @@
 			if (base) base.content = brandColor;
 		}
 	});
+
+	// Crossfade background layers when backgroundStyle changes
+	let bgLayers: { id: number; style: string }[] = [{ id: 0, style: backgroundStyle }];
+	let _layerId = 1;
+	let _lastBg = backgroundStyle;
+	$effect(() => {
+		if (backgroundStyle !== _lastBg) {
+			const id = _layerId++;
+			bgLayers = [...bgLayers, { id, style: backgroundStyle }];
+			_lastBg = backgroundStyle;
+			// After fade-in completes, keep only the newest layer
+			setTimeout(() => {
+				bgLayers = [{ id, style: backgroundStyle }];
+			}, 260);
+		}
+	});
 </script>
 
 <svelte:head>
@@ -88,16 +104,51 @@
 
 <NavBar />
 <div
-	class={`app-shell ${darkRun ? 'dark-run' : ''} ${animateGrad ? 'animate-gradient' : ''}`}
-	style={`padding-top:4rem; background:${backgroundStyle}; --ring-color:${brandColor}`}
+	class={`app-shell ${darkRun ? 'dark-run' : ''}`}
+	style={`padding-top:4rem; --ring-color:${brandColor}`}
 >
-	{@render children?.()}
+	<div class="bg-stack">
+		{#each bgLayers as layer (layer.id)}
+			<div class="bg-layer" style={`background:${layer.style}`}></div>
+		{/each}
+	</div>
+	<div class="content-wrap">
+		{@render children?.()}
+	</div>
 </div>
 
 <style>
 	.app-shell {
 		min-height: 100vh;
-		transition: background 200ms ease;
+		position: relative;
+		overflow: hidden;
+	}
+
+	.bg-stack {
+		position: absolute;
+		inset: 0;
+		z-index: 0;
+	}
+
+	.bg-layer {
+		position: absolute;
+		inset: 0;
+		opacity: 0;
+		animation: fade-in-bg 240ms ease forwards;
+	}
+
+	@keyframes fade-in-bg {
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
+	}
+
+	.content-wrap {
+		position: relative;
+		z-index: 1;
 	}
 	:global(.dark-run) {
 		color-scheme: dark;
