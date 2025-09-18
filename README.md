@@ -1,6 +1,6 @@
-# sv
+# Pomodoro App (Svelte)
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Beautiful, theme-aware Pomodoro app with multi-page UX, animated backgrounds, and Safari-safe theme color.
 
 ## Creating a project
 
@@ -36,3 +36,24 @@ npm run build
 You can preview the production build with `npm run preview`.
 
 > To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+
+## Screenshots
+
+CI captures three screenshots on every push/PR and uploads them as an artifact. They’re also saved in `docs/screenshots` when generated locally.
+
+- Timer view
+	- `docs/screenshots/timer.png`
+- Tasks view
+	- `docs/screenshots/tasks.png`
+- Stats view
+	- `docs/screenshots/stats.png`
+
+To generate locally:
+
+```sh
+pnpm build
+pnpm preview --port 4173 &
+PREVIEW_URL=http://127.0.0.1:4173 node scripts/generate-screenshots.mjs
+```
+
+In CI, see workflow `.github/workflows/screenshots.yml` and the uploaded artifact named `app-screenshots`.

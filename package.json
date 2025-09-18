@@ -7,6 +7,8 @@
 		"dev": "vite dev",
 		"build": "vite build",
 		"preview": "vite preview",
+        "screenshots": "PREVIEW_URL=http://127.0.0.1:4173 node scripts/generate-screenshots.mjs",
+        "preview:screens": "vite preview --port 4173 & sleep 1 && pnpm screenshots && kill %1",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",

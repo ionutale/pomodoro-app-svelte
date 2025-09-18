@@ -1,0 +1,49 @@
+name: Build and Capture Screenshots
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  screenshots:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Install deps
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Preview and capture screenshots
+        run: |
+          pnpm preview --port 4173 &
+          PREVIEW_PID=$!
+          # Wait for server
+          npx wait-on http://127.0.0.1:4173
+          PREVIEW_URL=http://127.0.0.1:4173 node scripts/generate-screenshots.mjs
+          kill $PREVIEW_PID
+
+      - name: Upload screenshots artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-screenshots
+          path: docs/screenshots
