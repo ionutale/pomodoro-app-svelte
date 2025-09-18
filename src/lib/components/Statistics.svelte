@@ -7,7 +7,7 @@
 	type TimeRange = 'today' | 'week' | 'month' | 'all';
 
 	let timeRange: TimeRange = $state('week');
-	let stats: {
+	let stats = $state<{
 		totalSessions?: number;
 		pomodoroSessions?: number;
 		breakSessions?: number;
@@ -16,12 +16,12 @@
 		completionRate?: number;
 		avgDailySessions?: number;
 		avgDailyFocusTime?: number;
-		todayProgress?: unknown;
-		weekProgress?: unknown;
+		todayProgress?: any;
+		weekProgress?: any;
 		currentStreak?: number;
 		totalBreakTime?: number;
-	} = {};
-	let chartData: {
+	}>({});
+	let chartData = $state<{
 		labels?: string[];
 		datasets?: {
 			label: string;
@@ -30,7 +30,7 @@
 			borderColor: string;
 			borderWidth: number;
 		}[];
-	} = {};
+	}>({});
 
 	const unsub = sessionHistoryAgent.subscribe(() => {
 		updateStats();
@@ -68,7 +68,7 @@
 		const avgDailySessions = sessionStats.totalSessions / Math.max(daysDiff, 1);
 		const avgDailyFocusTime = totalFocusTime / Math.max(daysDiff, 1);
 
-		stats = {
+		Object.assign(stats, {
 			...sessionStats,
 			totalFocusTime,
 			completionRate,
@@ -79,7 +79,7 @@
 			currentStreak,
 			breakSessions: breakSessions.length,
 			totalBreakTime: breakSessions.reduce((total, s) => total + s.duration, 0)
-		};
+		});
 
 		// Generate chart data for the last 7 days
 		generateChartData();
@@ -87,7 +87,7 @@
 
 	function generateChartData() {
 		const last7Days = getLastNDays(7);
-		chartData = {
+		Object.assign(chartData, {
 			labels: last7Days.map((date) => date.toLocaleDateString('en-US', { weekday: 'short' })),
 			datasets: [
 				{
@@ -102,7 +102,7 @@
 					borderWidth: 1
 				}
 			]
-		};
+		});
 	}
 
 	function formatDuration(seconds: number): string {
