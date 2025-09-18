@@ -21,19 +21,24 @@
 	type SessionHistoryState = { sessions: SessionRecord[] };
 
 	let sessionState: SessionHistoryState = { sessions: [] };
-	let showHistory = false;
-	let filterMode: 'all' | 'Pomodoro' | 'ShortBreak' | 'LongBreak' = 'all';
-	let dateRange: TimeRange = 'all';
+	let showHistory = $state(false);
+	let filterMode = $state<'all' | 'Pomodoro' | 'ShortBreak' | 'LongBreak'>('all');
+	let dateRange = $state<TimeRange>('all');
 
-	const unsubscribe = sessionHistoryAgent.subscribe((state) => (sessionState = state));
-
-	onDestroy(() => unsubscribe?.());
-
-	$: sessions = sessionState.sessions;
-	$: filteredSessions = sessions.filter((session) => {
-		if (filterMode !== 'all' && session.mode !== filterMode) return false;
-		return isInRange(session.startTime, dateRange);
+	let unsubscribe: (() => void) | null = null;
+	$effect(() => {
+		unsubscribe?.();
+		unsubscribe = sessionHistoryAgent.subscribe((state) => (sessionState = state));
+		return () => unsubscribe?.();
 	});
+
+	let sessions = $derived(sessionState.sessions);
+	let filteredSessions = $derived(
+		sessions.filter((session) => {
+			if (filterMode !== 'all' && session.mode !== filterMode) return false;
+			return isInRange(session.startTime, dateRange);
+		})
+	);
 
 	let stats = $derived(sessionHistoryAgent.getSessionStats());
 
@@ -55,7 +60,7 @@
 </script>
 
 <div class="session-history-container">
-	<button class="history-toggle" on:click={() => (showHistory = !showHistory)}>
+	<button class="history-toggle" onclick={() => (showHistory = !showHistory)}>
 		📊 Session History {showHistory ? '▼' : '▶'}
 	</button>
 
@@ -132,7 +137,7 @@
 
 			{#if sessions.length > 0}
 				<div class="history-actions">
-					<button on:click={() => sessionHistoryAgent.clearHistory()}> Clear History </button>
+					<button onclick={() => sessionHistoryAgent.clearHistory()}> Clear History </button>
 				</div>
 			{/if}
 		</div>

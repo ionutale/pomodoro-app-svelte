@@ -2,6 +2,24 @@
 
 Beautiful, theme-aware Pomodoro app with multi-page UX, animated backgrounds, and Safari-safe theme color.
 
+<p align="center">
+	<img src="./docs/screenshots/pomodoro.png" alt="Pomodoro screenshot" width="720" />
+	<br/>
+	<em>Pomodoro</em>
+</p>
+
+<p align="center">
+	<img src="./docs/screenshots/short-break.png" alt="Short Break screenshot" width="720" />
+	<br/>
+	<em>Short Break</em>
+</p>
+
+<p align="center">
+	<img src="./docs/screenshots/long-break.png" alt="Long Break screenshot" width="720" />
+	<br/>
+	<em>Long Break</em>
+</p>
+
 ## Creating a project
 
 If you're seeing this, you've probably already done this step. Congrats!
@@ -40,24 +58,6 @@ You can preview the production build with `npm run preview`.
 ## Screenshots
 
 CI captures three screenshots on every push/PR and uploads them as an artifact. They’re also saved in `docs/screenshots` when generated locally.
-
-<p align="center">
-	<img src="./docs/screenshots/timer.png" alt="Timer view screenshot" width="720" />
-	<br/>
-	<em>Timer view</em>
-</p>
-
-<p align="center">
-	<img src="./docs/screenshots/tasks.png" alt="Tasks view screenshot" width="720" />
-	<br/>
-	<em>Tasks view</em>
-</p>
-
-<p align="center">
-	<img src="./docs/screenshots/stats.png" alt="Stats view screenshot" width="720" />
-	<br/>
-	<em>Stats view</em>
-</p>
 
 To generate locally:
 

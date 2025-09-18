@@ -21,20 +21,20 @@
 	type TaskState = { taskList: Task[]; activeTaskId: string | null; templates: TaskTemplate[] };
 
 	let taskState: TaskState = { taskList: [], activeTaskId: null, templates: [] };
-	let newTaskName = '';
-	let estimatedPomodoros = 1;
-	let editingTaskId: string | null = null;
-	let editingNote = '';
-	let editingDueDate = '';
+	let newTaskName = $state('');
+	let estimatedPomodoros = $state(1);
+	let editingTaskId = $state<string | null>(null);
+	let editingNote = $state('');
+	let editingDueDate = $state('');
 
 	$effect(() => {
 		const unsubscribe = taskAgent.subscribe((state) => (taskState = state));
 		return () => unsubscribe();
 	});
 
-	$: tasks = taskState.taskList;
-	$: activeTaskId = taskState.activeTaskId;
-	$: templates = taskState.templates;
+	let tasks = $derived(taskState.taskList);
+	let activeTaskId = $derived(taskState.activeTaskId);
+	let templates = $derived(taskState.templates);
 
 	function addTask() {
 		if (newTaskName.trim()) {
@@ -142,10 +142,10 @@
 			type="text"
 			placeholder="What are you working on?"
 			bind:value={newTaskName}
-			on:keydown={handleTaskKeydown}
+			onkeydown={handleTaskKeydown}
 		/>
 		<input type="number" min="1" max="10" bind:value={estimatedPomodoros} style="width: 60px;" />
-		<button on:click={addTask} disabled={!newTaskName.trim()}> Add Task </button>
+	<button onclick={addTask} disabled={!newTaskName.trim()}> Add Task </button>
 	</div>
 
 	<div class="task-list">
@@ -156,7 +156,7 @@
 				class:active={task.id === activeTaskId}
 			>
 				<div class="task-content">
-					<input type="checkbox" checked={task.isComplete} on:change={() => toggleTask(task.id)} />
+					<input type="checkbox" checked={task.isComplete} onchange={() => toggleTask(task.id)} />
 					<div class="task-details">
 						<span class="task-name" class:completed-text={task.isComplete}>
 							{task.name}
@@ -181,7 +181,7 @@
 					<div class="estimate-controls">
 						<button
 							class="estimate-btn"
-							on:click={() => decrementEstimate(task.id)}
+							onclick={() => decrementEstimate(task.id)}
 							disabled={task.estimatedPomodoros <= 1}
 						>
 							-
@@ -189,24 +189,24 @@
 						<span class="estimate">
 							{task.actualPomodoros}/{task.estimatedPomodoros}
 						</span>
-						<button class="estimate-btn" on:click={() => incrementEstimate(task.id)}> + </button>
+						<button class="estimate-btn" onclick={() => incrementEstimate(task.id)}> + </button>
 					</div>
 
 					<button
 						class="set-active-btn"
-						on:click={() => setActiveTask(task.id)}
+						onclick={() => setActiveTask(task.id)}
 						disabled={task.isComplete}
 					>
 						{task.id === activeTaskId ? 'Active' : 'Set Active'}
 					</button>
 
-					<button class="edit-btn" on:click={() => startEditingNote(task.id)} title="Edit Note">
+					<button class="edit-btn" onclick={() => startEditingNote(task.id)} title="Edit Note">
 						📝
 					</button>
 
 					<button
 						class="calendar-btn"
-						on:click={() => startEditingDueDate(task.id)}
+						onclick={() => startEditingDueDate(task.id)}
 						title="Set Due Date"
 					>
 						📅
@@ -214,13 +214,13 @@
 
 					<button
 						class="template-btn"
-						on:click={() => saveAsTemplate(task)}
+						onclick={() => saveAsTemplate(task)}
 						title="Save as Template"
 					>
 						★
 					</button>
 
-					<button class="delete-btn" on:click={() => deleteTask(task.id)}> × </button>
+					<button class="delete-btn" onclick={() => deleteTask(task.id)}> × </button>
 				</div>
 			</div>
 
@@ -250,9 +250,9 @@
 						</div>
 
 						<div class="edit-actions">
-							<button on:click={() => saveNote(task.id)}>Save Note</button>
-							<button on:click={() => saveDueDate(task.id)}>Save Date</button>
-							<button on:click={cancelNoteEditing}>Cancel</button>
+							<button onclick={() => saveNote(task.id)}>Save Note</button>
+							<button onclick={() => saveDueDate(task.id)}>Save Date</button>
+							<button onclick={cancelNoteEditing}>Cancel</button>
 						</div>
 					</div>
 				</div>
@@ -262,8 +262,8 @@
 
 	{#if tasks.length > 0}
 		<div class="task-actions">
-			<button on:click={() => taskAgent.clearFinishedTasks()}> Clear Finished </button>
-			<button on:click={() => taskAgent.clearAllTasks()}> Clear All </button>
+			<button onclick={() => taskAgent.clearFinishedTasks()}> Clear Finished </button>
+			<button onclick={() => taskAgent.clearAllTasks()}> Clear All </button>
 		</div>
 	{/if}
 
@@ -278,10 +278,10 @@
 							<span class="template-estimate">({template.estimatedPomodoros} pomodoros)</span>
 						</div>
 						<div class="template-controls">
-							<button class="use-template-btn" on:click={() => createTaskFromTemplate(template.id)}>
+							<button class="use-template-btn" onclick={() => createTaskFromTemplate(template.id)}>
 								Use Template
 							</button>
-							<button class="delete-template-btn" on:click={() => deleteTemplate(template.id)}>
+							<button class="delete-template-btn" onclick={() => deleteTemplate(template.id)}>
 								×
 							</button>
 						</div>

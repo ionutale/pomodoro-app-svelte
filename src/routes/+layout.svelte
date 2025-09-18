@@ -78,18 +78,24 @@
 		}
 	});
 
-	// Crossfade background layers when backgroundStyle changes
-	let bgLayers: { id: number; style: string }[] = [{ id: 0, style: backgroundStyle }];
-	let _layerId = 1;
-	let _lastBg = backgroundStyle;
+	// Crossfade background layers when backgroundStyle changes (runes-safe)
+	let bgLayers = $state<{ id: number; style: string }[]>([]);
+	let _layerId = 0;
+	let _lastBg = '';
 	$effect(() => {
-		if (backgroundStyle !== _lastBg) {
+		const current = backgroundStyle;
+		if (_lastBg === '') {
+			bgLayers = [{ id: _layerId++, style: current }];
+			_lastBg = current;
+			return;
+		}
+		if (current !== _lastBg) {
 			const id = _layerId++;
-			bgLayers = [...bgLayers, { id, style: backgroundStyle }];
-			_lastBg = backgroundStyle;
+			bgLayers = [...bgLayers, { id, style: current }];
+			_lastBg = current;
 			// After fade-in completes, keep only the newest layer
 			setTimeout(() => {
-				bgLayers = [{ id, style: backgroundStyle }];
+				bgLayers = [{ id, style: current }];
 			}, 260);
 		}
 	});
